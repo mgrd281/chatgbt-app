@@ -1974,25 +1974,122 @@
 
         #libraryList .history-item button {
             /* Delete button */
-            color: red;
+            color: var(--text-secondary);
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 1.2em;
-            padding: 0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        #libraryList .history-item button:hover {
+            background: rgba(255, 0, 0, 0.1);
+            color: red;
+        }
+
+        /* New Library Styles */
+        .lib-filter-btn {
+            text-align: left;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .lib-filter-btn:hover {
+            background: var(--input-bg);
+        }
+
+        .lib-filter-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .lib-card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .lib-btn {
+            flex: 1;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .lib-btn:hover {
+            background: var(--input-bg);
+        }
+
+        .lib-btn.primary {
+            background: var(--accent);
+            color: white;
+            border: none;
         }
     </style>
     <!-- Library Modal -->
     <div id="libraryModal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 800px; height: 80vh; display:flex; flex-direction:column;">
-            <div class="modal-header">
-                <h2>Bibliothek</h2>
+        <div class="modal-content"
+            style="max-width: 900px; height: 85vh; display:flex; flex-direction:column; padding: 0; overflow: hidden;">
+            <div class="modal-header"
+                style="padding: 20px; border-bottom: 1px solid var(--border); background: var(--bg-color);">
+                <h2 style="margin:0; display:flex; align-items:center; gap:10px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    Bibliothek
+                </h2>
                 <button class="close-btn"
                     onclick="document.getElementById('libraryModal').style.display='none'">&times;</button>
             </div>
-            <div id="libraryList"
-                style="flex:1; overflow-y:auto; padding:20px; display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">
-                <!-- Library Items -->
+
+            <div style="display: flex; flex: 1; overflow: hidden;">
+                <!-- Sidebar Filters -->
+                <div
+                    style="width: 220px; background: var(--bg-color); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 5px;">
+                    <div style="position: relative; margin-bottom: 15px;">
+                        <input type="text" id="libSearch" placeholder="Suchen..." oninput="renderLibrary()"
+                            style="width: 100%; padding: 10px 10px 10px 35px; border-radius: 8px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-primary); font-size: 14px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2"
+                            style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.5;">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </div>
+
+                    <button class="lib-filter-btn active" onclick="setLibFilter('all', this)">
+                        <span>📑</span> Alle
+                    </button>
+                    <button class="lib-filter-btn" onclick="setLibFilter('image', this)">
+                        <span>🖼️</span> Bilder
+                    </button>
+                    <button class="lib-filter-btn" onclick="setLibFilter('text', this)">
+                        <span>📝</span> Texte / Prompts
+                    </button>
+                </div>
+
+                <!-- Grid -->
+                <div id="libraryList"
+                    style="flex: 1; overflow-y: auto; padding: 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; align-content: start; background: var(--input-bg);">
+                    <!-- Items -->
+                </div>
             </div>
         </div>
     </div>
@@ -2704,34 +2801,83 @@
         }
 
         function deleteFromLibrary(id) {
-            if (confirm('Delete this item?')) {
+            if (confirm('Möchtest du dieses Element wirklich löschen?')) {
                 allLibrary = allLibrary.filter(i => i.id !== id);
                 localStorage.setItem('allLibrary', JSON.stringify(allLibrary));
                 renderLibrary();
             }
         }
 
+        let currentLibFilter = 'all';
+
+        function setLibFilter(filter, btn) {
+            currentLibFilter = filter;
+            document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderLibrary();
+        }
+
+        function useLibraryItem(text) {
+            input.value = text;
+            input.style.height = 'auto';
+            document.getElementById('libraryModal').style.display = 'none';
+            input.focus();
+        }
+
         function renderLibrary() {
             const list = document.getElementById('libraryList');
+            const search = document.getElementById('libSearch').value.toLowerCase();
             list.innerHTML = '';
-            if (allLibrary.length === 0) {
-                list.innerHTML = '<p style="color:var(--text-secondary); grid-column:1/-1; text-align:center;">Library is empty.</p>';
+
+            let filtered = allLibrary.filter(item => {
+                // Filter by Type
+                if (currentLibFilter === 'image' && !item.image) return false;
+                if (currentLibFilter === 'text' && item.image) return false;
+
+                // Filter by Search
+                if (search && !item.text.toLowerCase().includes(search)) return false;
+
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; color:var(--text-secondary); margin-top:50px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="opacity:0.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        Keine Elemente gefunden.
+                    </div>`;
                 return;
             }
 
-            allLibrary.slice().reverse().forEach(item => {
+            filtered.slice().reverse().forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'history-item';
+                card.style.background = 'var(--bg-color)';
+                card.style.border = '1px solid var(--border)';
+                card.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
 
                 let html = '';
+
+                // Image Header
                 if (item.image) {
-                    html += `<img src="${item.image}" style="width:100%; height:150px; object-fit:cover; border-radius:5px; margin-bottom:10px; cursor:pointer;" onclick="window.open('${item.image}')">`;
+                    html += `
+                    <div style="position:relative; width:100%; height:160px; overflow:hidden; border-radius: 6px 6px 0 0; margin: -15px -15px 10px -15px;">
+                        <img src="${item.image}" style="width:100%; height:100%; object-fit:cover; cursor:pointer; transition:transform 0.3s;" onclick="window.open('${item.image}')" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    </div>`;
                 }
-                html += `<div style="font-size:12px; margin-bottom:10px; max-height:100px; overflow-y:auto;">${marked.parse(item.text)}</div>`;
-                html += `<div style="display:flex; justify-content:space-between; width:100%; margin-top:auto;">
-                            <span style="font-size:10px; color:var(--text-secondary);">${new Date(item.date).toLocaleDateString()}</span>
-                            <button onclick="deleteFromLibrary(${item.id})" style="color:red; background:none; border:none; cursor:pointer;">🗑️</button>
-                         </div>`;
+
+                // Content
+                html += `<div style="font-size:13px; margin-bottom:15px; max-height:100px; overflow-y:auto; line-height:1.5; color:var(--text-primary);">${marked.parse(item.text)}</div>`;
+
+                // Actions Footer
+                html += `
+                    <div class="lib-card-actions">
+                        <button class="lib-btn" onclick="deleteFromLibrary(${item.id})" title="Löschen">🗑️</button>
+                        ${!item.image ? `<button class="lib-btn primary" onclick="useLibraryItem(\`${item.text.replace(/`/g, '\\`').replace(/"/g, '&quot;')}\`)" title="Verwenden">Verwenden ↵</button>` : ''}
+                        ${item.image ? `<button class="lib-btn primary" onclick="window.open('${item.image}')" title="Ansehen">Ansehen ↗</button>` : ''}
+                    </div>
+                    <div style="font-size:10px; color:var(--text-secondary); margin-top:8px; text-align:right;">${new Date(item.date).toLocaleDateString()}</div>
+                `;
 
                 card.innerHTML = html;
                 list.appendChild(card);
