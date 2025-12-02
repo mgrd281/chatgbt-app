@@ -38,9 +38,22 @@ const initDb = async () => {
         email TEXT UNIQUE,
         phone TEXT,
         settings JSONB,
-        last_active BIGINT
+        last_active BIGINT,
+        subscription_plan TEXT,
+        subscription_status TEXT,
+        device_info TEXT,
+        created_at BIGINT
       );
     `);
+
+        // Add columns if they don't exist (Migration for existing table)
+        try {
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_plan TEXT;`);
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status TEXT;`);
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS device_info TEXT;`);
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at BIGINT;`);
+        } catch (e) { console.log("Migration note: Columns might already exist"); }
+
         console.log("Database Tables Ready.");
 
         // Insert Test Record
@@ -68,17 +81,21 @@ app.use((req, res, next) => {
 
 // Users API
 app.post('/api/user', async (req, res) => {
-    const { email, phone, settings } = req.body;
+    const { email, phone, settings, subscription_plan, device_info } = req.body;
     try {
-        // Simple upsert based on email for now, or just a single user record if single user app
-        // For this demo, we'll assume a single user or upsert by email
         if (email) {
+            const now = Date.now();
             await pool.query(
-                `INSERT INTO users (email, phone, settings, last_active) 
-                 VALUES ($1, $2, $3, $4) 
+                `INSERT INTO users (email, phone, settings, last_active, subscription_plan, subscription_status, device_info, created_at) 
+                 VALUES ($1, $2, $3, $4, $5, 'active', $6, $7) 
                  ON CONFLICT (email) 
-                 DO UPDATE SET phone = $2, settings = $3, last_active = $4`,
-                [email, phone, JSON.stringify(settings), Date.now()]
+                 DO UPDATE SET 
+                    phone = $2, 
+                    settings = $3, 
+                    last_active = $4,
+                    subscription_plan = $5,
+                    device_info = $6`,
+                [email, phone, JSON.stringify(settings), now, subscription_plan || 'free', device_info, now]
             );
         }
         res.json({ success: true });

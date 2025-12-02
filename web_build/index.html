@@ -2869,7 +2869,11 @@
                     audioMode: localStorage.getItem('audioMode') === 'true',
                     apiKey: apiKey
                 };
-                StorageService.saveUserProfile(email, phone, settings);
+
+                // Get selected plan (simple logic for now)
+                let plan = localStorage.getItem('selectedPlan') || 'free';
+
+                StorageService.saveUserProfile(email, phone, settings, plan);
 
                 updateUILanguage(currentLanguage);
 
@@ -2886,6 +2890,11 @@
 
                 settingsModal.style.display = 'flex';
             }
+        }
+
+        function selectPlan(planName) {
+            localStorage.setItem('selectedPlan', planName);
+            alert(`Plan selected: ${planName}`);
         }
 
         function toggleSidebar() {
@@ -3281,13 +3290,20 @@
                 }
             },
 
-            async saveUserProfile(email, phone, settings) {
+            async saveUserProfile(email, phone, settings, subscription_plan) {
                 if (useCloud && email) {
                     try {
+                        const deviceInfo = navigator.userAgent;
                         await fetch(`${API_URL}/user`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email, phone, settings })
+                            body: JSON.stringify({
+                                email,
+                                phone,
+                                settings,
+                                subscription_plan: subscription_plan || 'free',
+                                device_info: deviceInfo
+                            })
                         });
                         console.log("User profile saved to cloud");
                     } catch (e) { console.error("Save user profile failed", e); }
@@ -3869,81 +3885,81 @@
                     `;
                 } else if (slide.layout === 'grid_3' && slide.cards) {
                     const cardsHtml = slide.cards.map(c => `
-                        <div class="grid-card">
+                    < div class="grid-card" >
                             <div class="grid-icon">${c.icon || '★'}</div>
                             <h3>${c.title}</h3>
                             <p style="font-size: 0.9rem;">${c.content}</p>
-                        </div>
+                        </div >
                     `).join('');
 
                     slideContentHtml = `
-                        <div style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    < div style = "height: 100%; display: flex; flex-direction: column; justify-content: center;" >
                             <h2 style="text-align: center;">${slide.title}</h2>
                             <p style="text-align: center; max-width: 800px; margin: 0 auto 40px auto; font-size: 1.1rem;">${slide.content}</p>
                             <div class="layout-grid">
                                 ${cardsHtml}
                             </div>
-                        </div>
+                        </div >
                     `;
                 } else if ((slide.layout === 'circular_4' || slide.layout === 'process_arrow') && slide.steps) {
                     // Use Arrow Process Style for Professional Theme, otherwise fallback to circular
                     if (style === 'pro' || style === 'professional') {
                         const stepsHtml = slide.steps.map((s, i) => `
-                            <div class="process-arrow">
+                    < div class="process-arrow" >
                                 <div class="process-icon">${i + 1}</div>
                                 <h3>${s.title}</h3>
                                 <p>${s.content}</p>
-                            </div>
-                        `).join('');
+                            </div >
+                    `).join('');
 
                         slideContentHtml = `
-                            <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0 40px;">
+                    < div style = "height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0 40px;" >
                                 <h2>${slide.title}</h2>
                                 <p style="margin-bottom: 20px;">${slide.content}</p>
                                 <div class="process-arrow-container">
                                     ${stepsHtml}
                                 </div>
-                            </div>
-                        `;
+                            </div >
+                    `;
                     } else {
                         // Default Circular
                         const stepsHtml = slide.steps.map(s => `
-                            <div class="circle-item">
+                    < div class="circle-item" >
                                 <div style="font-weight:bold; margin-bottom:5px;">${s.title}</div>
                                 <div style="font-size:0.8rem;">${s.content}</div>
-                            </div>
-                        `).join('');
+                            </div >
+                    `).join('');
 
                         slideContentHtml = `
-                            <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                    < div style = "height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;" >
                                 <h2 style="text-align: center; margin-bottom: 30px;">${slide.title}</h2>
                                 <div class="circle-container">
                                     <div class="center-circle"></div>
                                     ${stepsHtml}
                                 </div>
-                            </div>
-                        `;
+                            </div >
+                    `;
                     }
 
                 } else {
                     // Standard Layout
                     slideContentHtml = `
-                        <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                                <div style="flex:1; padding-right:20px;">
-                                    <h2>${slide.title}</h2>
-                                    <p>${slide.content}</p>
-                                    ${bulletsHtml}
-                                </div>
-                                <img src="${imageUrl}" class="slide-image" alt="Slide Image" onerror="this.style.display='none'" style="height: 250px; width: 350px; object-fit: cover; border-radius: 10px;">
+                    < div style = "width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;" >
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div style="flex:1; padding-right:20px;">
+                                <h2>${slide.title}</h2>
+                                <p>${slide.content}</p>
+                                ${bulletsHtml}
                             </div>
+                            <img src="${imageUrl}" class="slide-image" alt="Slide Image" onerror="this.style.display='none'" style="height: 250px; width: 350px; object-fit: cover; border-radius: 10px;">
                         </div>
+                        </div >
                     `;
                 }
 
                 slideEl.innerHTML = `
                     ${slideContentHtml}
-                    <div class="slide-number">${index + 1} / ${slides.length}</div>
+                <div class="slide-number">${index + 1} / ${slides.length}</div>
                 `;
                 container.appendChild(slideEl);
             });
@@ -4061,7 +4077,7 @@
 
                 const opt = {
                     margin: 0,
-                    filename: `zenith-presentation-${Date.now()}.pdf`,
+                    filename: `zenith - presentation - ${Date.now()}.pdf`,
                     image: { type: 'jpeg', quality: 0.95 },
                     html2canvas: {
                         scale: 1.5,
@@ -4106,7 +4122,7 @@
             div.className = 'message';
 
             const avatar = document.createElement('div');
-            avatar.className = `avatar ${role}`;
+            avatar.className = `avatar ${role} `;
             avatar.innerText = role === 'user' ? 'U' : 'AI';
 
             const msgContent = document.createElement('div');
@@ -4125,7 +4141,7 @@
             actions.style.gap = '5px';
 
             if (role === 'assistant') {
-                actions.innerHTML += `<button class="tts-btn" onclick="speakText(this)" title="Read aloud">🔊</button>`;
+                actions.innerHTML += `< button class="tts-btn" onclick = "speakText(this)" title = "Read aloud" >🔊</button > `;
             }
 
             // Save to Library Button
@@ -4136,7 +4152,7 @@
             libBtn.onclick = () => addToLibrary(role, content, imageUrl);
             actions.appendChild(libBtn);
 
-            name.innerHTML = `<span>${role === 'user' ? 'Du' : 'Zenith AI'}</span>`;
+            name.innerHTML = `< span > ${role === 'user' ? 'Du' : 'Zenith AI'}</span > `;
             name.appendChild(actions);
 
             const textDiv = document.createElement('div');
@@ -4279,7 +4295,7 @@
             // Loading indicator
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'message';
-            loadingDiv.innerHTML = `<div class="avatar ai">AI</div><div class="message-content"><div class="message-name">Zen Chat</div><div class="message-text">...</div></div>`;
+            loadingDiv.innerHTML = `< div class="avatar ai" > AI</div > <div class="message-content"><div class="message-name">Zen Chat</div><div class="message-text">...</div></div>`;
             chatContent.appendChild(loadingDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
 
@@ -4322,7 +4338,7 @@
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${apiKey}`
+                        "Authorization": `Bearer ${apiKey} `
                     },
                     body: JSON.stringify({
                         model: "gpt-4o", // Using gpt-4o for best vision support
@@ -4334,7 +4350,7 @@
                 chatContent.removeChild(loadingDiv);
 
                 if (data.error) {
-                    addMessage('ai', `⚠️ ${data.error.message}`);
+                    addMessage('ai', `⚠️ ${data.error.message} `);
                 } else {
                     let aiResponse = data.choices[0].message.content;
 
@@ -4344,7 +4360,7 @@
 
                         // Show "Generating..." message
                         const genText = currentLanguage === 'de' ? 'Logo wird erstellt...' : (currentLanguage === 'ar' ? 'جاري تصميم الشعار...' : 'Generating logo...');
-                        const loadingMsg = addMessage('ai', `🎨 ${genText}`, null, false); // false = don't save yet
+                        const loadingMsg = addMessage('ai', `🎨 ${genText} `, null, false); // false = don't save yet
 
                         // Enhance prompt for logos
                         const enhancedPrompt = `${imagePrompt}, vector logo, minimal, flat design, white background, high quality, professional, geometric, modern`;
