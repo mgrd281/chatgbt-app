@@ -1560,6 +1560,17 @@
         const defaultKey = '';
         let apiKey = localStorage.getItem('apiKey') || defaultKey;
 
+        // Chat History State - Moved to top to avoid initialization errors
+        let allChats;
+        try {
+            allChats = JSON.parse(localStorage.getItem('allChats'));
+        } catch (e) {
+            allChats = [];
+        }
+        if (!Array.isArray(allChats)) allChats = [];
+
+        let currentChatId = Date.now();
+
         // Ensure we always use the valid key
         if (!apiKey || apiKey.length < 10) {
             apiKey = defaultKey;
