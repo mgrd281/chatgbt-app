@@ -2783,6 +2783,12 @@
                 if (currentLanguage === 'ar') langName = "Arabic";
                 if (currentLanguage === 'uk') langName = "Ukrainian";
 
+                // Enhanced Prompt for better quality
+                let promptContext = `about "${topic}"`;
+                if (topic.length > 100) {
+                    promptContext = `based on the following content: """${topic}"""`;
+                }
+
                 const prompt = `Create a highly detailed, professional, and comprehensive 5-slide presentation ${promptContext} in ${langName} language. 
                 
                 For each slide, choose the best layout based on the content:
