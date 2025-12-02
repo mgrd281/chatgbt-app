@@ -50,7 +50,9 @@ class ChatViewModel: ObservableObject {
     
     func sendMessage(_ text: String) {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        guard let apiKey = SecureStore.shared.read(service: apiKeyService, account: apiKeyAccount), !apiKey.isEmpty else {
+        let apiKey = getApiKey()
+        
+        if apiKey.isEmpty {
             errorMessage = "Bitte hinterlegen Sie erst einen API-Key in den Einstellungen."
             return
         }
@@ -110,6 +112,10 @@ class ChatViewModel: ObservableObject {
     }
     
     func getApiKey() -> String {
-        return SecureStore.shared.read(service: apiKeyService, account: apiKeyAccount) ?? ""
+        let storedKey = SecureStore.shared.read(service: apiKeyService, account: apiKeyAccount)
+        if let key = storedKey, !key.isEmpty {
+            return key
+        }
+        return "" // Enter your API Key here
     }
 }

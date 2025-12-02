@@ -23,7 +23,7 @@ struct ChatView: View {
                                 Spacer()
                                 ProgressView()
                                     .padding()
-                                    .background(Color(.systemGray6))
+                                    .background(Color.gray.opacity(0.1))
                                     .clipShape(Circle())
                                 Spacer()
                             }
@@ -57,7 +57,7 @@ struct ChatView: View {
                 HStack(alignment: .bottom) {
                     TextField("Nachricht...", text: $inputText, axis: .vertical)
                         .padding(10)
-                        .background(Color(.systemGray6))
+                        .background(Color.gray.opacity(0.1))
                         .cornerRadius(20)
                         .lineLimit(1...5)
                         .focused($isInputFocused)
@@ -72,11 +72,13 @@ struct ChatView: View {
                     .padding(.bottom, 2)
                 }
                 .padding()
-                .background(Color(.systemBackground))
+                .background(Color.primary.colorInvert().opacity(0.05)) // Adaptive background
             }
         }
         .navigationTitle(viewModel.currentSession?.title ?? "Chat")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .alert(item: Binding<String?>(
             get: { viewModel.errorMessage },
             set: { viewModel.errorMessage = $0 }
@@ -110,12 +112,11 @@ struct MessageBubble: View {
             VStack(alignment: isUser ? .trailing : .leading) {
                 Text(.init(message.content)) // Markdown support
                     .padding(12)
-                    .background(isUser ? Color.blue : Color(.systemGray5))
+                    .background(isUser ? Color.blue : Color.gray.opacity(0.2))
                     .foregroundColor(isUser ? .white : .primary)
                     .cornerRadius(16)
-                    // Add specific corners if desired, but cornerRadius is fine for now
             }
-            .frame(maxWidth: UIScreen.main.bounds.width * 0.75, alignment: isUser ? .trailing : .leading)
+            .frame(maxWidth: 400, alignment: isUser ? .trailing : .leading) // Fixed max width for simplicity
             
             if !isUser { Spacer() }
         }
