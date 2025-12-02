@@ -823,6 +823,69 @@
             border-left: 10px solid white;
             margin-right: 8px;
         }
+
+        /* Presentation Layouts & Images */
+        .slide-container.vertical {
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+        }
+
+        .slide-container.vertical .slide {
+            min-width: 100%;
+            height: auto;
+            min-height: 600px;
+            margin-bottom: 20px;
+            scroll-snap-align: start;
+        }
+
+        .slide-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 14px;
+            opacity: 0.7;
+            font-weight: bold;
+        }
+
+        .view-controls {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 101;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .view-mode-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .view-mode-btn.active {
+            background: var(--accent);
+        }
     </style>
 </head>
 
@@ -1208,6 +1271,13 @@
         <div class="modal slide-view-modal">
             <button onclick="document.getElementById('pptViewModal').style.display='none'"
                 style="position: absolute; top: 20px; right: 20px; z-index: 101; background: rgba(0,0,0,0.5); color: white; border: none; font-size: 24px; cursor: pointer; width: 40px; height: 40px; border-radius: 50%;">&times;</button>
+
+            <div class="view-controls">
+                <button class="view-mode-btn active" onclick="toggleLayout('horizontal')"
+                    id="btnHorizontal">Horizontal</button>
+                <button class="view-mode-btn" onclick="toggleLayout('vertical')" id="btnVertical">Vertical</button>
+            </div>
+
             <div class="slide-container" id="slideContainer">
                 <!-- Slides go here -->
             </div>
@@ -1754,10 +1824,16 @@
                 if (currentLanguage === 'uk') langName = "Ukrainian";
 
                 // Enhanced Prompt for better quality
+                // Enhanced Prompt for better quality with images
                 const prompt = `Create a highly detailed, professional, and comprehensive 5-slide presentation about "${topic}" in ${langName} language. 
                 The content must be deep, insightful, and well-structured. 
-                Each slide should have a clear 'title', a substantial 'content' paragraph (at least 2-3 sentences), and 3-4 detailed 'bullets'.
-                Return strictly valid JSON in this format: [{"title": "Slide Title", "content": "Detailed content text...", "bullets": ["Detailed Bullet 1", "Detailed Bullet 2"]}]. 
+                Each slide should have:
+                1. A clear 'title'
+                2. A substantial 'content' paragraph (at least 2-3 sentences)
+                3. 3-4 detailed 'bullets'
+                4. An 'image_prompt' (English description) for an AI image generator that visually represents the slide's content.
+                
+                Return strictly valid JSON in this format: [{"title": "...", "content": "...", "bullets": ["..."], "image_prompt": "..."}]. 
                 Do not include markdown formatting or code blocks, just the raw JSON array.`;
 
                 const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -1801,7 +1877,10 @@
             const container = document.getElementById('slideContainer');
             container.innerHTML = '';
 
-            slides.forEach(slide => {
+            // Reset layout to horizontal by default
+            toggleLayout('horizontal');
+
+            slides.forEach((slide, index) => {
                 const slideEl = document.createElement('div');
                 slideEl.className = `slide theme-${style}`;
 
@@ -1810,17 +1889,38 @@
                     bulletsHtml = '<ul>' + slide.bullets.map(b => `<li>${b}</li>`).join('') + '</ul>';
                 }
 
+                // Generate Image URL (using Pollinations.ai for free AI images)
+                const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(slide.image_prompt || slide.title)}?width=800&height=400&nologo=true&seed=${Math.random()}`;
+
                 slideEl.innerHTML = `
-                    <div>
+                    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                        <img src="${imageUrl}" class="slide-image" alt="Slide Image" onerror="this.style.display='none'">
                         <h2>${slide.title}</h2>
                         <p>${slide.content}</p>
                         ${bulletsHtml}
+                        <div class="slide-number">${index + 1} / ${slides.length}</div>
                     </div>
                 `;
                 container.appendChild(slideEl);
             });
 
             document.getElementById('pptViewModal').style.display = 'flex';
+        }
+
+        function toggleLayout(mode) {
+            const container = document.getElementById('slideContainer');
+            const btnH = document.getElementById('btnHorizontal');
+            const btnV = document.getElementById('btnVertical');
+
+            if (mode === 'vertical') {
+                container.classList.add('vertical');
+                btnH.classList.remove('active');
+                btnV.classList.add('active');
+            } else {
+                container.classList.remove('vertical');
+                btnH.classList.add('active');
+                btnV.classList.remove('active');
+            }
         }
 
         function exportToPDF() {
