@@ -2911,17 +2911,23 @@
             chatArea.scrollTop = chatArea.scrollHeight;
 
             // Simulate "Thinking" and "Researching" - Longer Duration
+            const progressBar = loadingDiv.querySelector('#pptProgress');
+            const statusText = loadingDiv.querySelector('#pptStatus');
+            const timeText = loadingDiv.querySelector('#pptTime');
+
             let progress = 0;
             const interval = setInterval(() => {
                 progress += 2; // Slower progress (was 5)
                 if (progress > 95) progress = 95;
-                progressBar.style.width = `${progress}%`;
-                timeText.innerText = `${progress}%`;
+                if (progressBar) progressBar.style.width = `${progress}%`;
+                if (timeText) timeText.innerText = `${progress}%`;
 
-                if (progress < 30) statusText.innerText = "Researching content...";
-                else if (progress < 60) statusText.innerText = "Structuring slides...";
-                else if (progress < 85) statusText.innerText = "Designing layout...";
-                else statusText.innerText = "Finalizing presentation...";
+                if (statusText) {
+                    if (progress < 30) statusText.innerText = "Researching content...";
+                    else if (progress < 60) statusText.innerText = "Structuring slides...";
+                    else if (progress < 85) statusText.innerText = "Designing layout...";
+                    else statusText.innerText = "Finalizing presentation...";
+                }
 
             }, 150); // Slower interval (was 100)
 
