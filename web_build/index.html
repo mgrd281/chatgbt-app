@@ -2959,40 +2959,6 @@
             messageCount = 0;
             isPinVerified = false;
             conversationHistory = []; // Reset history
-
-            renderChatHistory();
-        }
-
-        function saveCurrentChat() {
-            if (conversationHistory.length === 0) return;
-
-            const existingIndex = allChats.findIndex(c => c.id === currentChatId);
-
-            // Determine title from first user message
-            let title = "New Chat";
-            const firstUserMsg = conversationHistory.find(m => m.role === 'user');
-            if (firstUserMsg) {
-                if (typeof firstUserMsg.content === 'string') {
-                    title = firstUserMsg.content.substring(0, 30);
-                } else if (Array.isArray(firstUserMsg.content)) {
-                    title = firstUserMsg.content[0].text.substring(0, 30);
-                }
-            }
-
-            const chatData = {
-                id: currentChatId,
-                title: title,
-                messages: conversationHistory,
-                timestamp: Date.now()
-            };
-
-            if (existingIndex > -1) {
-                allChats[existingIndex] = chatData;
-            } else {
-                allChats.push(chatData);
-            }
-            localStorage.setItem('allChats', JSON.stringify(allChats));
-            renderChatHistory();
         }
 
         function speakText(btn) {
@@ -3176,6 +3142,167 @@
             });
         }
 
+        // --- Storage Service (Cloud Sync) ---
+        const API_URL = 'http://localhost:3000/api';
+        let useCloud = false;
+
+        const StorageService = {
+            async init() {
+                try {
+                    const res = await fetch(`${API_URL}/health`);
+                    if (res.ok) {
+                        useCloud = true;
+                        console.log("Connected to Cloud Database (Neon)");
+                        this.showStatus(true);
+                        // Sync initial data
+                        await this.sync();
+                    } else {
+                        this.showStatus(false);
+                    }
+                } catch (e) {
+                    console.log("Cloud unavailable, using LocalStorage");
+                    this.showStatus(false);
+                }
+            },
+
+            showStatus(connected) {
+                const statusDiv = document.createElement('div');
+                statusDiv.style.position = 'fixed';
+                statusDiv.style.bottom = '10px';
+                statusDiv.style.right = '10px';
+                statusDiv.style.padding = '5px 10px';
+                statusDiv.style.borderRadius = '20px';
+                statusDiv.style.fontSize = '12px';
+                statusDiv.style.fontWeight = 'bold';
+                statusDiv.style.zIndex = '1000';
+
+                if (connected) {
+                    statusDiv.style.background = '#dcfce7';
+                    statusDiv.style.color = '#166534';
+                    statusDiv.innerHTML = '☁️ Cloud Connected';
+                } else {
+                    statusDiv.style.background = '#fee2e2';
+                    statusDiv.style.color = '#991b1b';
+                    statusDiv.innerHTML = '💾 Local Mode';
+                }
+
+                // Remove old status if exists
+                const old = document.getElementById('cloudStatus');
+                if (old) old.remove();
+
+                statusDiv.id = 'cloudStatus';
+                document.body.appendChild(statusDiv);
+            },
+
+            async sync() {
+                if (!useCloud) return;
+                // Load from Cloud
+                try {
+                    const chatsRes = await fetch(`${API_URL}/chats`);
+                    const chats = await chatsRes.json();
+                    if (chats && Array.isArray(chats)) {
+                        // Merge logic: prefer cloud if newer, but for now just overwrite local list if cloud has data
+                        // A simple merge strategy:
+                        const localChats = JSON.parse(localStorage.getItem('allChats') || '[]');
+
+                        // Combine and deduplicate by ID
+                        const combined = [...chats, ...localChats];
+                        const unique = Array.from(new Map(combined.map(item => [item.id, item])).values());
+
+                        allChats = unique.map(c => ({ ...c, id: parseInt(c.id) }));
+                        renderChatHistory();
+                    }
+
+                    const pptRes = await fetch(`${API_URL}/presentations`);
+                    const ppts = await pptRes.json();
+                    if (ppts && Array.isArray(ppts)) {
+                        allPresentations = ppts.map(p => ({ ...p, id: parseInt(p.id) }));
+                        renderPresentationHistory();
+                    }
+                } catch (e) {
+                    console.error("Sync failed", e);
+                }
+            },
+
+            async saveChat(chat) {
+                // Always save local first
+                localStorage.setItem('allChats', JSON.stringify(allChats));
+
+                if (useCloud) {
+                    try {
+                        await fetch(`${API_URL}/chats`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(chat)
+                        });
+                    } catch (e) { console.error("Save chat failed", e); }
+                }
+            },
+
+            async deleteChat(id) {
+                localStorage.setItem('allChats', JSON.stringify(allChats));
+                if (useCloud) {
+                    try {
+                        await fetch(`${API_URL}/chats/${id}`, { method: 'DELETE' });
+                    } catch (e) { console.error("Delete chat failed", e); }
+                }
+            },
+
+            async savePresentation(ppt) {
+                localStorage.setItem('allPresentations', JSON.stringify(allPresentations));
+                if (useCloud) {
+                    try {
+                        await fetch(`${API_URL}/presentations`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(ppt)
+                        });
+                    } catch (e) { console.error("Save ppt failed", e); }
+                }
+            },
+
+            async deletePresentation(id) {
+                localStorage.setItem('allPresentations', JSON.stringify(allPresentations));
+                if (useCloud) {
+                    try {
+                        await fetch(`${API_URL}/presentations/${id}`, { method: 'DELETE' });
+                    } catch (e) { console.error("Delete ppt failed", e); }
+                }
+            }
+        };
+
+        // Initialize Storage on Load
+        window.addEventListener('load', async () => {
+            await StorageService.init();
+            renderChatHistory();
+            renderPresentationHistory();
+        });
+
+        // --- Chat Functions ---
+        function newChat() {
+            if (currentChatId) {
+                saveCurrentChat();
+            }
+            currentChatId = Date.now();
+            conversationHistory = [];
+            chatContent.innerHTML = '';
+
+            // Add Greeting
+            const greeting = document.getElementById('greeting').innerText;
+            addMessage('ai', greeting, null, false);
+
+            // Add to history list immediately
+            const newChatObj = { id: currentChatId, title: 'New Chat', messages: [], timestamp: Date.now() };
+            allChats.unshift(newChatObj);
+            StorageService.saveChat(newChatObj); // Save
+            renderChatHistory();
+
+            // Close sidebar on mobile
+            if (window.innerWidth <= 768) {
+                document.querySelector('.sidebar').classList.remove('active');
+            }
+        }
+
         function renderChatHistory() {
             const list = document.getElementById('chatHistoryList');
             list.innerHTML = '';
@@ -3235,17 +3362,20 @@
             e.stopPropagation();
             if (confirm('Delete this chat?')) {
                 allChats = allChats.filter(c => c.id !== id);
-                localStorage.setItem('allChats', JSON.stringify(allChats));
+                StorageService.deleteChat(id); // Delete via Service
                 if (currentChatId === id) newChat();
                 else renderChatHistory();
             }
         }
 
         // Initialize history on load
+        // This block is replaced by the new StorageService init
+        /*
         window.addEventListener('load', () => {
             renderChatHistory();
             renderPresentationHistory();
         });
+        */
 
         // --- Presentation History Functions ---
         function savePresentation(topic, slides) {
@@ -3256,7 +3386,7 @@
                 timestamp: Date.now()
             };
             allPresentations.push(pptData);
-            localStorage.setItem('allPresentations', JSON.stringify(allPresentations));
+            StorageService.savePresentation(pptData); // Save via Service
             renderPresentationHistory();
         }
 
@@ -3291,7 +3421,7 @@
             e.stopPropagation();
             if (confirm('Delete this presentation?')) {
                 allPresentations = allPresentations.filter(p => p.id !== id);
-                localStorage.setItem('allPresentations', JSON.stringify(allPresentations));
+                StorageService.deletePresentation(id); // Delete via Service
                 renderPresentationHistory();
             }
         }
