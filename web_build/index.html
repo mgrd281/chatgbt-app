@@ -949,6 +949,124 @@
             background-size: 20px 20px;
         }
 
+        /* Professional Theme (Baby Bee Style) */
+        .theme-professional {
+            background: #ffffff;
+            color: #1a1a1a;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+
+        .theme-professional::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 20px;
+            background: linear-gradient(to bottom, #2c3e50 60%, #f1c40f 60%, #f1c40f 80%, #e74c3c 80%);
+            z-index: 1;
+        }
+
+        .theme-professional h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 30px;
+            text-transform: none;
+            letter-spacing: -1px;
+        }
+
+        .theme-professional p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .theme-professional .grid-card {
+            background: #e0e0e0;
+            padding: 30px;
+            border-radius: 0;
+            /* Sharp edges */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            box-shadow: none;
+            transition: transform 0.3s;
+        }
+
+        .theme-professional .grid-card:hover {
+            transform: translateY(-5px);
+            background: #d6d6d6;
+        }
+
+        .theme-professional .grid-icon {
+            width: 60px;
+            height: 60px;
+            background: #333;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .theme-professional .layout-split .image-side img {
+            border-radius: 0;
+            /* No radius for pro look */
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Process Steps (Arrow Style) */
+        .process-arrow-container {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .process-arrow {
+            flex: 1;
+            background: #d1d1d1;
+            padding: 20px 30px 20px 40px;
+            position: relative;
+            clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-height: 180px;
+        }
+
+        .process-arrow:first-child {
+            clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%);
+            padding-left: 20px;
+        }
+
+        .process-arrow h3 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin: 10px 0;
+            color: #000;
+        }
+
+        .process-arrow p {
+            font-size: 0.9rem;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        .process-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
         /* Template Selection Grid */
         .template-grid {
             display: grid;
@@ -3194,6 +3312,7 @@
             else if (style === 'neon') container.classList.add('theme-neon');
             else if (style === 'corporate') container.classList.add('theme-corporate');
             else if (style === 'minimal') container.classList.add('theme-minimal');
+            else if (style === 'pro' || style === 'professional') container.classList.add('theme-professional');
             else container.classList.add('theme-modern'); // Default
 
             // Reset layout to horizontal by default
@@ -3236,7 +3355,7 @@
                 } else if (slide.layout === 'grid_3' && slide.cards) {
                     const cardsHtml = slide.cards.map(c => `
                         <div class="grid-card">
-                            <span class="grid-icon">${c.icon || '★'}</span>
+                            <div class="grid-icon">${c.icon || '★'}</div>
                             <h3>${c.title}</h3>
                             <p style="font-size: 0.9rem;">${c.content}</p>
                         </div>
@@ -3245,37 +3364,64 @@
                     slideContentHtml = `
                         <div style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
                             <h2 style="text-align: center;">${slide.title}</h2>
-                            <p style="text-align: center; max-width: 800px; margin: 0 auto 20px auto;">${slide.content}</p>
+                            <p style="text-align: center; max-width: 800px; margin: 0 auto 40px auto; font-size: 1.1rem;">${slide.content}</p>
                             <div class="layout-grid">
                                 ${cardsHtml}
                             </div>
                         </div>
                     `;
-                } else if (slide.layout === 'circular_4' && slide.steps) {
-                    const stepsHtml = slide.steps.map(s => `
-                        <div class="circle-item">
-                            <div style="font-weight:bold; margin-bottom:5px;">${s.title}</div>
-                            <div style="font-size:0.8rem;">${s.content}</div>
-                        </div>
-                    `).join('');
-
-                    slideContentHtml = `
-                        <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                            <h2 style="text-align: center; margin-bottom: 30px;">${slide.title}</h2>
-                            <div class="circle-container">
-                                <div class="center-circle"></div>
-                                ${stepsHtml}
+                } else if ((slide.layout === 'circular_4' || slide.layout === 'process_arrow') && slide.steps) {
+                    // Use Arrow Process Style for Professional Theme, otherwise fallback to circular
+                    if (style === 'pro' || style === 'professional') {
+                        const stepsHtml = slide.steps.map((s, i) => `
+                            <div class="process-arrow">
+                                <div class="process-icon">${i + 1}</div>
+                                <h3>${s.title}</h3>
+                                <p>${s.content}</p>
                             </div>
-                        </div>
-                    `;
+                        `).join('');
+
+                        slideContentHtml = `
+                            <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0 40px;">
+                                <h2>${slide.title}</h2>
+                                <p style="margin-bottom: 20px;">${slide.content}</p>
+                                <div class="process-arrow-container">
+                                    ${stepsHtml}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Default Circular
+                        const stepsHtml = slide.steps.map(s => `
+                            <div class="circle-item">
+                                <div style="font-weight:bold; margin-bottom:5px;">${s.title}</div>
+                                <div style="font-size:0.8rem;">${s.content}</div>
+                            </div>
+                        `).join('');
+
+                        slideContentHtml = `
+                            <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <h2 style="text-align: center; margin-bottom: 30px;">${slide.title}</h2>
+                                <div class="circle-container">
+                                    <div class="center-circle"></div>
+                                    ${stepsHtml}
+                                </div>
+                            </div>
+                        `;
+                    }
+
                 } else {
                     // Standard Layout
                     slideContentHtml = `
                         <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                            <img src="${imageUrl}" class="slide-image" alt="Slide Image" onerror="this.style.display='none'" style="height: 200px;">
-                            <h2>${slide.title}</h2>
-                            <p>${slide.content}</p>
-                            ${bulletsHtml}
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <div style="flex:1; padding-right:20px;">
+                                    <h2>${slide.title}</h2>
+                                    <p>${slide.content}</p>
+                                    ${bulletsHtml}
+                                </div>
+                                <img src="${imageUrl}" class="slide-image" alt="Slide Image" onerror="this.style.display='none'" style="height: 250px; width: 350px; object-fit: cover; border-radius: 10px;">
+                            </div>
                         </div>
                     `;
                 }
