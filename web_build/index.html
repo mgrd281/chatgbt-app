@@ -1001,6 +1001,11 @@
                         </div>
 
                         <div class="setting-group">
+                            <label class="setting-label" id="apiKeyLabel">API Key</label>
+                            <input type="password" class="setting-input" id="apiKeyInput" placeholder="sk-...">
+                        </div>
+
+                        <div class="setting-group">
                             <label class="setting-label" id="sysPromptLabel">System Prompt</label>
                             <textarea class="setting-input" id="systemPrompt" rows="3"
                                 placeholder="Du bist ein hilfreicher Assistent..."></textarea>
@@ -1308,7 +1313,8 @@
                 pptTopic: "Thema",
                 pptStyle: "Stil",
                 pptGen: "Erstellen",
-                exportPdf: "PDF Exportieren"
+                exportPdf: "PDF Exportieren",
+                apiKeyLabel: "OpenAI API Schlüssel"
             },
             en: {
                 newChat: "New Chat",
@@ -1354,7 +1360,8 @@
                 pptTopic: "Topic",
                 pptStyle: "Style",
                 pptGen: "Generate",
-                exportPdf: "Export PDF"
+                exportPdf: "Export PDF",
+                apiKeyLabel: "OpenAI API Key"
             },
             ar: {
                 newChat: "محادثة جديدة",
@@ -1400,7 +1407,8 @@
                 pptTopic: "الموضوع",
                 pptStyle: "النمط",
                 pptGen: "إنشاء",
-                exportPdf: "تصدير PDF"
+                exportPdf: "تصدير PDF",
+                apiKeyLabel: "مفتاح OpenAI API"
             },
             uk: {
                 newChat: "Новий чат",
@@ -1445,7 +1453,8 @@
                 pptTopic: "Тема",
                 pptStyle: "Стиль",
                 pptGen: "Створити",
-                exportPdf: "Експорт PDF"
+                exportPdf: "Експорт PDF",
+                apiKeyLabel: "Ключ OpenAI API"
             }
         };
 
@@ -1496,6 +1505,7 @@
             document.getElementById('langLabel').innerText = t.langLabel;
             document.getElementById('sysPromptLabel').innerText = t.sysPromptLabel;
             document.getElementById('systemPrompt').placeholder = t.sysPromptPlaceholder;
+            document.getElementById('apiKeyLabel').innerText = t.apiKeyLabel;
             document.getElementById('audioModeLabel').innerText = t.audioMode;
             document.getElementById('autocompleteLabel').innerText = t.autocomplete;
 
@@ -1623,6 +1633,9 @@
                 localStorage.setItem('userPhone', document.getElementById('phoneInput').value);
                 localStorage.setItem('audioMode', document.getElementById('audioModeToggle').checked);
 
+                apiKey = document.getElementById('apiKeyInput').value;
+                localStorage.setItem('apiKey', apiKey);
+
                 localStorage.setItem('systemPrompt', systemPrompt);
                 localStorage.setItem('language', currentLanguage);
 
@@ -1637,6 +1650,7 @@
                 document.getElementById('emailInput').value = localStorage.getItem('userEmail') || '';
                 document.getElementById('phoneInput').value = localStorage.getItem('userPhone') || '';
                 document.getElementById('audioModeToggle').checked = localStorage.getItem('audioMode') === 'true';
+                document.getElementById('apiKeyInput').value = apiKey;
 
                 settingsModal.style.display = 'flex';
             }
