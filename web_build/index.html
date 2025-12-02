@@ -1002,6 +1002,117 @@
             margin-right: 8px;
         }
 
+        /* Code Blocks & Copy */
+        .code-block-wrapper {
+            position: relative;
+            margin: 10px 0;
+            background: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+            background: #2d2d2d;
+            color: #ccc;
+            font-size: 12px;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        .copy-btn:hover {
+            opacity: 1;
+        }
+
+        pre {
+            margin: 0;
+            padding: 15px;
+            overflow-x: auto;
+            color: #d4d4d4;
+        }
+
+        /* TTS Button */
+        .tts-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            margin-left: 5px;
+            padding: 2px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .tts-btn:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+
+        /* New Presentation Themes */
+        /* Neon */
+        .theme-neon {
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+        }
+
+        .theme-neon h2 {
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+        }
+
+        .theme-neon p,
+        .theme-neon li {
+            color: #e0e0e0;
+        }
+
+        .theme-neon .slide-image {
+            border: 2px solid #f0f;
+            box-shadow: 0 0 15px #f0f;
+        }
+
+        /* Corporate */
+        .theme-corporate {
+            background: #f0f2f5;
+            color: #333;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .theme-corporate h2 {
+            color: #1a237e;
+            border-bottom: 3px solid #1a237e;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .theme-corporate .slide-number {
+            color: #1a237e;
+            font-weight: bold;
+        }
+
+        /* Minimal */
+        .theme-minimal {
+            background: #fff;
+            color: #000;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+
+        .theme-minimal h2 {
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
         /* Chat History Sidebar */
         .chat-history {
             flex: 1;
@@ -1151,6 +1262,15 @@
                 <line x1="9" y1="21" x2="9" y2="9"></line>
             </svg>
             <span id="presentationText">Präsentation</span>
+        </div>
+
+        <div class="menu-item" onclick="exportChat()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Export Chat</span>
         </div>
 
         <div class="sidebar-section-label">Chats</div>
@@ -1503,6 +1623,22 @@
                             Abc</div>
                         <div class="template-name">Warm</div>
                     </div>
+                    <div class="template-card" onclick="selectTemplate(this, 'neon')">
+                        <div class="template-preview" style="background: #000; border: 1px solid #0ff; color: #0ff;">Abc
+                        </div>
+                        <div class="template-name">Neon</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate(this, 'corporate')">
+                        <div class="template-preview"
+                            style="background: #f0f2f5; color: #333; font-family: 'Segoe UI', sans-serif;">Abc</div>
+                        <div class="template-name">Corp</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate(this, 'minimal')">
+                        <div class="template-preview"
+                            style="background: #fff; border: 1px solid #ccc; color: #333; font-family: sans-serif; font-weight: 900;">
+                            Abc</div>
+                        <div class="template-name">Minimal</div>
+                    </div>
                 </div>
             </div>
 
@@ -1550,10 +1686,179 @@
             </div>
         </div>
     </div>
+    <style>
+        /* Code Block Styling */
+        .code-block-wrapper {
+            position: relative;
+            background: var(--code-bg);
+            border-radius: 8px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            border: 1px solid var(--code-border);
+        }
 
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--code-header-bg);
+            color: var(--code-header-text);
+            font-size: 0.8em;
+            border-bottom: 1px solid var(--code-border);
+        }
+
+        .code-header span {
+            font-family: monospace;
+            text-transform: uppercase;
+        }
+
+        .copy-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.75em;
+            transition: background 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .code-block-wrapper pre {
+            margin: 0;
+            padding: 15px;
+            overflow-x: auto;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .code-block-wrapper code {
+            display: block;
+            color: var(--code-text);
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+        }
+
+        /* TTS Button */
+        .tts-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2em;
+            margin-left: 10px;
+            transition: color 0.2s ease;
+        }
+
+        .tts-btn:hover {
+            color: var(--accent);
+        }
+
+        /* Presentation Themes */
+        .slide-container.theme-warm .slide {
+            background: #FFF5E6;
+            color: #8E44AD;
+            font-family: 'Georgia', serif;
+        }
+
+        .slide-container.theme-warm h2 {
+            color: #C70039;
+        }
+
+        .slide-container.theme-warm .grid-card,
+        .slide-container.theme-warm .circle-item {
+            background: #FFC300;
+            color: #333;
+            border: 1px solid #FF5733;
+        }
+
+        .slide-container.theme-neon .slide {
+            background: #000;
+            color: #0ff;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff;
+        }
+
+        .slide-container.theme-neon h2 {
+            color: #f0f;
+            text-shadow: 0 0 5px #f0f, 0 0 10px #f0f;
+        }
+
+        .slide-container.theme-neon .grid-card,
+        .slide-container.theme-neon .circle-item {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #0ff;
+            box-shadow: 0 0 5px #0ff;
+        }
+
+        .slide-container.theme-corporate .slide {
+            background: #f0f2f5;
+            color: #333;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .slide-container.theme-corporate h2 {
+            color: #0056b3;
+        }
+
+        .slide-container.theme-corporate .grid-card,
+        .slide-container.theme-corporate .circle-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .slide-container.theme-minimal .slide {
+            background: #fff;
+            color: #333;
+            font-family: 'Helvetica Neue', sans-serif;
+            border: 1px solid #eee;
+        }
+
+        .slide-container.theme-minimal h2 {
+            color: #000;
+        }
+
+        .slide-container.theme-minimal .grid-card,
+        .slide-container.theme-minimal .circle-item {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+        }
+    </style>
     <script>
-        console.log("Zen Chat v2.1 - Loaded at " + new Date().toISOString());
-        marked.setOptions({ highlight: (code, lang) => hljs.highlightAuto(code).value });
+        console.log("Zen Chat v3.0 - Loaded at " + new Date().toISOString());
+
+        // Custom Marked Renderer for Copy Button
+        const renderer = new marked.Renderer();
+        renderer.code = function (code, language) {
+            const validLang = !!(language && hljs.getLanguage(language)) ? language : 'plaintext';
+            const highlighted = hljs.highlight(validLang, code).value;
+            return `
+                <div class="code-block-wrapper">
+                    <div class="code-header">
+                        <span>${validLang}</span>
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    </div>
+                    <pre><code class="hljs ${validLang}">${highlighted}</code></pre>
+                    <div style="display:none" class="raw-code">${encodeURIComponent(code)}</div>
+                </div>
+            `;
+        };
+        marked.setOptions({ renderer: renderer });
+
+        function copyToClipboard(btn) {
+            const wrapper = btn.closest('.code-block-wrapper');
+            const rawCode = decodeURIComponent(wrapper.querySelector('.raw-code').innerText);
+            navigator.clipboard.writeText(rawCode).then(() => {
+                const original = btn.innerText;
+                btn.innerText = 'Copied!';
+                setTimeout(() => btn.innerText = original, 2000);
+            });
+        }
 
         const chatContent = document.getElementById('chatContent');
         const chatArea = document.getElementById('chatArea');
@@ -2361,15 +2666,27 @@
             const container = document.getElementById('slideContainer');
             container.innerHTML = '';
 
+            // Set theme class
+            container.className = 'slide-container'; // Reset
+            if (style === 'warm') container.classList.add('theme-warm');
+            else if (style === 'neon') container.classList.add('theme-neon');
+            else if (style === 'corporate') container.classList.add('theme-corporate');
+            else if (style === 'minimal') container.classList.add('theme-minimal');
+            else container.classList.add('theme-modern'); // Default
+
             // Reset layout to horizontal by default
             toggleLayout('horizontal');
 
             slides.forEach((slide, index) => {
                 const slideEl = document.createElement('div');
-                slideEl.className = `slide theme-${style}`;
+                slideEl.className = 'slide';
+
+                // Make content editable
+                slideEl.contentEditable = "true";
+                slideEl.style.outline = "none"; // Remove outline on focus
 
                 let bulletsHtml = '';
-                if (slide.bullets && slide.bullets.length) {
+                if (slide.bullets && slide.bullets.length > 0) {
                     bulletsHtml = '<ul>' + slide.bullets.map(b => `<li>${b}</li>`).join('') + '</ul>';
                 }
 
@@ -2522,7 +2839,6 @@
                 pinModal.style.display = 'none';
                 pinError.style.display = 'none';
                 pinInput.value = '';
-                // Automatically send the message that was blocked? 
                 // For simplicity, let user click send again.
                 alert(translations[currentLanguage].pinAccepted);
             } else {
@@ -2543,23 +2859,30 @@
 
             const name = document.createElement('div');
             name.className = 'message-name';
-            name.innerText = role === 'user' ? 'Du' : 'Zen Chat';
+            name.style.display = 'flex';
+            name.style.alignItems = 'center';
+            name.style.justifyContent = 'space-between';
 
-            const text = document.createElement('div');
-            text.className = 'message-text';
-            text.innerHTML = marked.parse(content);
+            name.innerHTML = `
+                <span>${role === 'user' ? 'Du' : 'Zen Chat'}</span>
+                ${role === 'assistant' ? `<button class="tts-btn" onclick="speakText(this)" title="Read aloud">🔊</button>` : ''}
+            `;
 
-            // RTL support for Arabic
-            if (currentLanguage === 'ar' && role === 'ai') {
-                text.style.direction = 'rtl';
-                text.style.textAlign = 'right';
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.innerHTML = marked.parse(content);
+
+            // Store raw text for TTS
+            if (role === 'assistant') {
+                textDiv.setAttribute('data-raw-text', content);
             }
 
             msgContent.appendChild(name);
-            msgContent.appendChild(text);
+            msgContent.appendChild(textDiv);
 
             div.appendChild(avatar);
             div.appendChild(msgContent);
+
             chatContent.appendChild(div);
             chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: 'smooth' });
         }
@@ -2645,12 +2968,13 @@
                 if (currentLanguage === 'ar') langInstruction = "لغة النظام هي العربية. أجب بالعربية افتراضياً، ما لم يطلب المستخدم لغة أخرى بوضوح.";
                 if (currentLanguage === 'uk') langInstruction = "Системна мова - українська. Відповідайте українською за замовчуванням, якщо користувач явно не попросить іншу мову.";
 
-                // Add Time Context
+                // Add Time Context & Image Gen Instruction
                 const now = new Date();
                 const timeContext = ` Current date and time: ${now.toLocaleString(currentLanguage)}.`;
+                const imageGenInstruction = " If the user explicitly asks to generate, draw, or create an image, start your response STRICTLY with 'IMAGE_GEN: ' followed by the English prompt for the image. Do not add any other text.";
 
                 // Combine with system prompt
-                const finalSystemContent = (systemPrompt ? systemPrompt + " " : "") + langInstruction + timeContext;
+                const finalSystemContent = (systemPrompt ? systemPrompt + " " : "") + langInstruction + timeContext + imageGenInstruction;
 
                 const systemMessage = { role: "system", content: finalSystemContent };
 
@@ -2688,14 +3012,40 @@
 
                 if (data.error) {
                     addMessage('ai', `⚠️ ${data.error.message}`);
-                    // Remove the failed user message from history so it doesn't break next request? 
-                    // Or just keep it. Let's keep it simple.
                 } else {
-                    const aiResponse = data.choices[0].message.content;
-                    addMessage('ai', aiResponse);
-                    // Add AI response to history
-                    conversationHistory.push({ role: "assistant", content: aiResponse });
-                    saveCurrentChat(); // Auto-save
+                    let aiResponse = data.choices[0].message.content;
+
+                    // Check for Image Generation
+                    if (aiResponse.startsWith('IMAGE_GEN:')) {
+                        const imagePrompt = aiResponse.replace('IMAGE_GEN:', '').trim();
+                        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(imagePrompt)}?nologo=true`;
+
+                        // Show Image
+                        const imgDiv = document.createElement('div');
+                        imgDiv.className = 'message';
+                        imgDiv.innerHTML = `
+                            <div class="avatar ai">AI</div>
+                            <div class="message-content">
+                                <div class="message-name">Zen Chat (Image)</div>
+                                <div class="message-text">
+                                    <img src="${imageUrl}" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                    <p style="font-size:12px; color:var(--text-secondary); margin-top:5px;">Generated: ${imagePrompt}</p>
+                                </div>
+                            </div>
+                        `;
+                        chatContent.appendChild(imgDiv);
+
+                        // Save to history as a special message or just the text?
+                        // Let's save the text so context is kept, but maybe modify it for display
+                        conversationHistory.push({ role: "assistant", content: `[Generated Image: ${imagePrompt}]` });
+                        saveCurrentChat();
+
+                    } else {
+                        addMessage('ai', aiResponse);
+                        // Add AI response to history
+                        conversationHistory.push({ role: "assistant", content: aiResponse });
+                        saveCurrentChat(); // Auto-save
+                    }
                 }
 
             } catch (e) {
