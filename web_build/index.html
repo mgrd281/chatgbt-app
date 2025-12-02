@@ -3208,7 +3208,7 @@
                 // Add Time Context & Image Gen Instruction
                 const now = new Date();
                 const timeContext = ` Current date and time: ${now.toLocaleString(currentLanguage)}.`;
-                const imageGenInstruction = " If the user explicitly asks to generate, draw, or create an image, start your response STRICTLY with 'IMAGE_GEN: ' followed by the English prompt for the image. Do not add any other text.";
+                const imageGenInstruction = " If the user explicitly asks to generate, draw, or create an image, start your response STRICTLY with 'IMAGE_GEN: ' followed by the English prompt. If the user asks for a LOGO or ICON, start with 'LOGO_GEN: ' followed by the English prompt. Do not add any other text.";
 
                 // Combine with system prompt
                 const finalSystemContent = (systemPrompt ? systemPrompt + " " : "") + langInstruction + timeContext + imageGenInstruction;
@@ -3252,36 +3252,27 @@
                 } else {
                     let aiResponse = data.choices[0].message.content;
 
-                    // Check for Image Generation
-                    if (aiResponse.startsWith('IMAGE_GEN:')) {
+                    // Check for Logo Generation
+                    if (aiResponse.startsWith('LOGO_GEN:')) {
+                        const imagePrompt = aiResponse.replace('LOGO_GEN:', '').trim();
+                        // Enhance prompt for logos
+                        const enhancedPrompt = `${imagePrompt}, vector logo, minimal, flat design, white background, high quality`;
+                        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=512&height=512&nologo=true`;
+
+                        showGeneratedImage(imageUrl, imagePrompt, "Logo");
+
+                    } else if (aiResponse.startsWith('IMAGE_GEN:')) {
                         const imagePrompt = aiResponse.replace('IMAGE_GEN:', '').trim();
-                        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(imagePrompt)}?nologo=true`;
+                        // Enhance prompt for general images
+                        const enhancedPrompt = `${imagePrompt}, high resolution, detailed, 4k`;
+                        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=1024&height=1024&nologo=true`;
 
-                        // Show Image
-                        const imgDiv = document.createElement('div');
-                        imgDiv.className = 'message';
-                        imgDiv.innerHTML = `
-                            <div class="avatar ai">AI</div>
-                            <div class="message-content">
-                                <div class="message-name">Zen Chat (Image)</div>
-                                <div class="message-text">
-                                    <img src="${imageUrl}" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                                    <p style="font-size:12px; color:var(--text-secondary); margin-top:5px;">Generated: ${imagePrompt}</p>
-                                </div>
-                            </div>
-                        `;
-                        chatContent.appendChild(imgDiv);
-
-                        // Save to history as a special message or just the text?
-                        // Let's save the text so context is kept, but maybe modify it for display
-                        conversationHistory.push({ role: "assistant", content: `[Generated Image: ${imagePrompt}]` });
-                        saveCurrentChat();
+                        showGeneratedImage(imageUrl, imagePrompt, "Image");
 
                     } else {
                         addMessage('ai', aiResponse);
-                        // Add AI response to history
                         conversationHistory.push({ role: "assistant", content: aiResponse });
-                        saveCurrentChat(); // Auto-save
+                        saveCurrentChat();
                     }
                 }
 
@@ -3289,6 +3280,25 @@
                 if (loadingDiv.parentNode) chatContent.removeChild(loadingDiv);
                 addMessage('ai', `Error: ${e.message}`);
             }
+        }
+
+        function showGeneratedImage(url, prompt, type) {
+            const imgDiv = document.createElement('div');
+            imgDiv.className = 'message';
+            imgDiv.innerHTML = `
+                <div class="avatar ai">AI</div>
+                <div class="message-content">
+                    <div class="message-name">Zenith AI (${type})</div>
+                    <div class="message-text">
+                        <img src="${url}" style="max-width: ${type === 'Logo' ? '250px' : '100%'}; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: block; margin-bottom: 10px;">
+                        <p style="font-size:12px; color:var(--text-secondary);">Generated: ${prompt}</p>
+                    </div>
+                </div>
+            `;
+            chatContent.appendChild(imgDiv);
+
+            conversationHistory.push({ role: "assistant", content: `[Generated ${type}: ${prompt}]` });
+            saveCurrentChat();
         }
 
         // Enter to send
