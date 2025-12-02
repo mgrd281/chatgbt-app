@@ -10,6 +10,12 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- PDF.js for rendering PDFs as images -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Set worker for PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
@@ -2388,6 +2394,8 @@
                         input.focus();
                     };
                     reader.readAsDataURL(file);
+                } else if (file.type === 'application/pdf') {
+                    processPdf(file);
                 }
             }
         }
@@ -2990,18 +2998,66 @@
             chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: 'smooth' });
         }
 
-        function handleImageSelect(input) {
+        async function handleImageSelect(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
-                const reader = new FileReader();
 
-                reader.onload = function (e) {
-                    currentImageBase64 = e.target.result;
-                    imagePreview.src = currentImageBase64;
-                    imagePreviewContainer.style.display = 'block';
-                };
+                if (file.type === 'application/pdf') {
+                    await processPdf(file);
+                } else {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        currentImageBase64 = e.target.result;
+                        imagePreview.src = currentImageBase64;
+                        imagePreviewContainer.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
 
-                reader.readAsDataURL(file);
+        async function processPdf(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                const page = await pdf.getPage(1); // Get first page
+
+                const viewport = page.getViewport({ scale: 1.5 });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                currentImageBase64 = canvas.toDataURL('image/jpeg');
+                imagePreview.src = currentImageBase64;
+                imagePreviewContainer.style.display = 'block';
+
+            } catch (error) {
+                console.error("Error processing PDF:", error);
+                alert("Could not process PDF file.");
+            }
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files && files[0]) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        currentImageBase64 = e.target.result;
+                        imagePreview.src = currentImageBase64;
+                        imagePreviewContainer.style.display = 'block';
+                        input.focus();
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file.type === 'application/pdf') {
+                    processPdf(file);
+                }
             }
         }
 
