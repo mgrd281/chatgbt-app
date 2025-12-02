@@ -2943,7 +2943,12 @@
                     promptContext = `based on the following content: """${topic}"""`;
                 }
 
-                const prompt = `Create a highly detailed, professional, and comprehensive 5-slide presentation ${promptContext} in ${langName} language. 
+                const prompt = `Create a highly detailed, professional, and comprehensive presentation ${promptContext} in ${langName} language. 
+                
+                CRITICAL INSTRUCTIONS:
+                1. Create between 8 and 15 slides. Do not make it too short. Take your time to cover the topic in depth.
+                2. For "image_prompt", describe a "photorealistic, 4k, professional, cinematic lighting" image.
+                3. Return ONLY a valid JSON array of objects.
                 
                 For each slide, choose the best layout based on the content:
                 - "standard": Title, content, bullets, image.
@@ -3001,6 +3006,31 @@
                     savePresentation(topic, slides);
 
                     renderSlides(slides, style);
+
+                    // Add to Chat as well
+                    const pptCard = `
+                        <div style="background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-top: 10px;">
+                            <h3 style="margin-top:0;">📊 Presentation: ${topic}</h3>
+                            <p style="font-size: 12px; color: var(--text-secondary);">${slides.length} Slides generated.</p>
+                            <div style="display:flex; gap:10px; margin-top:10px;">
+                                <button onclick="renderSlides(${JSON.stringify(slides).replace(/"/g, '&quot;')}, '${style}')" style="background:var(--accent); color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">Open Slides</button>
+                                <button onclick="exportToPDF()" style="background:var(--input-bg); border:1px solid var(--border); color:var(--text-primary); padding:5px 10px; border-radius:5px; cursor:pointer;">Download PDF</button>
+                            </div>
+                        </div>
+                    `;
+                    addMessage('ai', `I have generated the presentation "${topic}". You can view it below or download it as PDF.\n\nTo edit, you can click on the text in the slides directly, or tell me what changes you'd like to make and I can regenerate it.`, null, true);
+
+                    // Append the card manually to the last message
+                    const lastMsg = chatContent.lastElementChild.querySelector('.message-text');
+                    lastMsg.innerHTML += pptCard;
+
+                    // Save this interaction to history
+                    conversationHistory.push({
+                        role: "assistant",
+                        content: `[Generated Presentation: ${topic}]`
+                    });
+                    saveCurrentChat();
+
                 }, 500);
 
             } catch (e) {
@@ -3039,8 +3069,10 @@
                     bulletsHtml = '<ul>' + slide.bullets.map(b => `<li>${b}</li>`).join('') + '</ul>';
                 }
 
-                // Generate Image URL
-                const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(slide.image_prompt || slide.title)}?width=800&height=600&nologo=true&seed=${Math.random()}`;
+                // Image Generation (Pollinations)
+                // Enhance prompt for professional look
+                const enhancedImagePrompt = slide.image_prompt + ", photorealistic, 4k, cinematic lighting, professional photography, high detail";
+                const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedImagePrompt)}?width=800&height=600&nologo=true`;
 
                 let slideContentHtml = '';
 
