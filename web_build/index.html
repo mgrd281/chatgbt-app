@@ -1899,7 +1899,104 @@
             background: #f9f9f9;
             border: 1px solid #eee;
         }
+
+        /* Library Modal Specific Styles */
+        #libraryModal.modal-overlay {
+            z-index: 2000;
+            /* Ensure it's on top */
+        }
+
+        #libraryModal .modal-content {
+            max-width: 800px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #libraryList {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        #libraryList .history-item {
+            flex-direction: column;
+            align-items: flex-start;
+            height: auto;
+            cursor: default;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        #libraryList .history-item:hover {
+            transform: translateY(-2px);
+        }
+
+        #libraryList .history-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        #libraryList .history-item div:first-of-type {
+            /* Text content */
+            font-size: 12px;
+            margin-bottom: 10px;
+            max-height: 100px;
+            overflow-y: auto;
+            color: var(--text-primary);
+        }
+
+        #libraryList .history-item div:last-of-type {
+            /* Date and delete button */
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: auto;
+            align-items: center;
+        }
+
+        #libraryList .history-item span {
+            /* Date */
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        #libraryList .history-item button {
+            /* Delete button */
+            color: red;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 0;
+        }
     </style>
+    <!-- Library Modal -->
+    <div id="libraryModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 800px; height: 80vh; display:flex; flex-direction:column;">
+            <div class="modal-header">
+                <h2>Bibliothek</h2>
+                <button class="close-btn"
+                    onclick="document.getElementById('libraryModal').style.display='none'">&times;</button>
+            </div>
+            <div id="libraryList"
+                style="flex:1; overflow-y:auto; padding:20px; display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:15px;">
+                <!-- Library Items -->
+            </div>
+        </div>
+    </div>
+
     <script>
         console.log("Zen Chat v3.0 - Loaded at " + new Date().toISOString());
 
@@ -1967,6 +2064,13 @@
             allPresentations = [];
         }
         if (!Array.isArray(allPresentations)) allPresentations = [];
+
+        // Library State
+        let allLibrary;
+        try {
+            allLibrary = JSON.parse(localStorage.getItem('allLibrary'));
+        } catch (e) { allLibrary = []; }
+        if (!Array.isArray(allLibrary)) allLibrary = [];
 
         let currentChatId = Date.now();
 
@@ -2578,7 +2682,60 @@
         }
 
         function openLibrary() {
-            alert("Bibliothek feature coming soon! This will store your favorite prompts and templates.");
+            document.getElementById('libraryModal').style.display = 'flex';
+            renderLibrary();
+        }
+
+        function addToLibrary(role, text, img) {
+            try {
+                const item = {
+                    id: Date.now(),
+                    role: role,
+                    text: text || '',
+                    image: img || null,
+                    date: new Date().toISOString()
+                };
+                allLibrary.push(item);
+                localStorage.setItem('allLibrary', JSON.stringify(allLibrary));
+                alert('Saved to Library! 📚');
+            } catch (e) {
+                alert('Storage full! Could not save to library.');
+            }
+        }
+
+        function deleteFromLibrary(id) {
+            if (confirm('Delete this item?')) {
+                allLibrary = allLibrary.filter(i => i.id !== id);
+                localStorage.setItem('allLibrary', JSON.stringify(allLibrary));
+                renderLibrary();
+            }
+        }
+
+        function renderLibrary() {
+            const list = document.getElementById('libraryList');
+            list.innerHTML = '';
+            if (allLibrary.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-secondary); grid-column:1/-1; text-align:center;">Library is empty.</p>';
+                return;
+            }
+
+            allLibrary.slice().reverse().forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'history-item';
+
+                let html = '';
+                if (item.image) {
+                    html += `<img src="${item.image}" style="width:100%; height:150px; object-fit:cover; border-radius:5px; margin-bottom:10px; cursor:pointer;" onclick="window.open('${item.image}')">`;
+                }
+                html += `<div style="font-size:12px; margin-bottom:10px; max-height:100px; overflow-y:auto;">${marked.parse(item.text)}</div>`;
+                html += `<div style="display:flex; justify-content:space-between; width:100%; margin-top:auto;">
+                            <span style="font-size:10px; color:var(--text-secondary);">${new Date(item.date).toLocaleDateString()}</span>
+                            <button onclick="deleteFromLibrary(${item.id})" style="color:red; background:none; border:none; cursor:pointer;">🗑️</button>
+                         </div>`;
+
+                card.innerHTML = html;
+                list.appendChild(card);
+            });
         }
 
         function renderChatHistory() {
@@ -2605,42 +2762,33 @@
             if (!chat) return;
 
             currentChatId = chat.id;
-            conversationHistory = chat.messages;
+            conversationHistory = chat.messages || [];
             chatContent.innerHTML = '';
 
-            // Reconstruct UI
+            // Re-render messages
             conversationHistory.forEach(msg => {
-                if (msg.role === 'user') {
-                    if (Array.isArray(msg.content)) {
-                        // Handle image + text
-                        const textPart = msg.content.find(p => p.type === 'text');
-                        const imgPart = msg.content.find(p => p.type === 'image_url');
+                let text = "";
+                let imgSrc = null;
 
-                        if (imgPart) {
-                            const imgDiv = document.createElement('div');
-                            imgDiv.className = 'message';
-                            imgDiv.innerHTML = `
-                                <div class="avatar user">U</div>
-                                <div class="message-content">
-                                    <div class="message-name">Du</div>
-                                    <div class="message-text">
-                                        <img src="${imgPart.image_url.url}" style="max-width: 200px; border-radius: 8px; margin-bottom: 8px; display: block;">
-                                        ${textPart ? marked.parse(textPart.text) : ''}
-                                    </div>
-                                </div>
-                            `;
-                            chatContent.appendChild(imgDiv);
-                        } else {
-                            addMessage('user', textPart ? textPart.text : '');
-                        }
-                    } else {
-                        addMessage('user', msg.content);
+                if (Array.isArray(msg.content)) {
+                    // Handle multimodal (User sent image)
+                    msg.content.forEach(c => {
+                        if (c.type === 'text') text += c.text;
+                        if (c.type === 'image_url') imgSrc = c.image_url.url;
+                    });
+                } else {
+                    // Handle text or generated image marker
+                    text = msg.content;
+                    if (typeof text === 'string' && text.startsWith('IMAGE_GENERATED_V2:')) {
+                        const parts = text.replace('IMAGE_GENERATED_V2:', '').split('|PROMPT:');
+                        imgSrc = parts[0];
+                        text = parts[1] || "Generated Image";
                     }
-                } else if (msg.role === 'assistant') {
-                    addMessage('ai', msg.content);
                 }
+                addMessage(msg.role, text, imgSrc, false); // false = don't save again
             });
 
+            // Highlight active
             renderChatHistory();
             chatArea.scrollTop = chatArea.scrollHeight;
         }
@@ -3041,7 +3189,7 @@
             }
         }
 
-        function addMessage(role, content) {
+        function addMessage(role, content, imageUrl = null, save = true) {
             const div = document.createElement('div');
             div.className = 'message';
 
@@ -3058,14 +3206,44 @@
             name.style.alignItems = 'center';
             name.style.justifyContent = 'space-between';
 
-            name.innerHTML = `
-                <span>${role === 'user' ? 'Du' : 'Zen Chat'}</span>
-                ${role === 'assistant' ? `<button class="tts-btn" onclick="speakText(this)" title="Read aloud">🔊</button>` : ''}
-            `;
+            // Actions Area
+            const actions = document.createElement('div');
+            actions.style.display = 'flex';
+            actions.style.alignItems = 'center';
+            actions.style.gap = '5px';
+
+            if (role === 'assistant') {
+                actions.innerHTML += `<button class="tts-btn" onclick="speakText(this)" title="Read aloud">🔊</button>`;
+            }
+
+            // Save to Library Button
+            const libBtn = document.createElement('button');
+            libBtn.className = 'tts-btn';
+            libBtn.innerHTML = '🔖';
+            libBtn.title = "Save to Library";
+            libBtn.onclick = () => addToLibrary(role, content, imageUrl);
+            actions.appendChild(libBtn);
+
+            name.innerHTML = `<span>${role === 'user' ? 'Du' : 'Zenith AI'}</span>`;
+            name.appendChild(actions);
 
             const textDiv = document.createElement('div');
             textDiv.className = 'message-text';
-            textDiv.innerHTML = marked.parse(content);
+
+            // Render Image if present
+            if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.style.maxWidth = '100%';
+                img.style.borderRadius = '10px';
+                img.style.marginBottom = '10px';
+                img.style.display = 'block';
+                img.style.cursor = 'pointer';
+                img.onclick = () => window.open(imageUrl);
+                textDiv.appendChild(img);
+            }
+
+            textDiv.innerHTML += marked.parse(content);
 
             // Store raw text for TTS
             if (role === 'assistant') {
@@ -3169,19 +3347,7 @@
 
             // Display User Message
             if (currentImageBase64) {
-                const imgDiv = document.createElement('div');
-                imgDiv.className = 'message';
-                imgDiv.innerHTML = `
-                    <div class="avatar user">U</div>
-                    <div class="message-content">
-                        <div class="message-name">Du</div>
-                        <div class="message-text">
-                            <img src="${currentImageBase64}" style="max-width: 200px; border-radius: 8px; margin-bottom: 8px; display: block;">
-                            ${text ? marked.parse(text) : ''}
-                        </div>
-                    </div>
-                `;
-                chatContent.appendChild(imgDiv);
+                addMessage('user', text, currentImageBase64);
             } else {
                 addMessage('user', text);
             }
@@ -3289,21 +3455,11 @@
         }
 
         function showGeneratedImage(url, prompt, type) {
-            const imgDiv = document.createElement('div');
-            imgDiv.className = 'message';
-            imgDiv.innerHTML = `
-                <div class="avatar ai">AI</div>
-                <div class="message-content">
-                    <div class="message-name">Zenith AI (${type})</div>
-                    <div class="message-text">
-                        <img src="${url}" style="max-width: ${type === 'Logo' ? '250px' : '100%'}; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: block; margin-bottom: 10px;">
-                        <p style="font-size:12px; color:var(--text-secondary);">Generated: ${prompt}</p>
-                    </div>
-                </div>
-            `;
-            chatContent.appendChild(imgDiv);
+            // Use standard addMessage for consistency
+            addMessage('ai', `Generated: ${prompt}`, url);
 
-            conversationHistory.push({ role: "assistant", content: `[Generated ${type}: ${prompt}]` });
+            // Save specially formatted string to history for reload
+            conversationHistory.push({ role: "assistant", content: `IMAGE_GENERATED_V2:${url}|PROMPT:${prompt}` });
             saveCurrentChat();
         }
 
