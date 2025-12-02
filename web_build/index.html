@@ -1903,6 +1903,14 @@
             updateTokenCount(this.value);
         });
 
+        // Enter key to send
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
         function updateTokenCount(text) {
             const count = Math.ceil(text.length / 4);
             tokenCount.innerText = `${count} Tokens`;
@@ -1987,15 +1995,7 @@
             document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
         }
 
-        let allChats;
-        try {
-            allChats = JSON.parse(localStorage.getItem('allChats'));
-        } catch (e) {
-            allChats = [];
-        }
-        if (!Array.isArray(allChats)) allChats = [];
 
-        let currentChatId = Date.now();
 
         function newChat() {
             currentChatId = Date.now();
