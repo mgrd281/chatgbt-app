@@ -1207,9 +1207,9 @@
             <h2 id="pptTitle" style="margin-bottom: 20px;">Präsentation erstellen</h2>
 
             <div class="setting-group">
-                <label class="setting-label" id="pptTopicLabel">Thema</label>
-                <input type="text" class="setting-input" id="pptTopic" placeholder="z.B. Zukunft der Technologie"
-                    style="font-size: 16px; padding: 12px;">
+                <label class="setting-label" id="pptTopicLabel">Thema / Inhalt</label>
+                <textarea class="setting-input" id="pptTopic" rows="6"
+                    placeholder="Thema eingeben oder Text hier einfügen..."></textarea>
             </div>
 
             <div class="setting-group">
@@ -1825,7 +1825,12 @@
 
                 // Enhanced Prompt for better quality
                 // Enhanced Prompt for better quality with images
-                const prompt = `Create a highly detailed, professional, and comprehensive 5-slide presentation about "${topic}" in ${langName} language. 
+                let promptContext = `about "${topic}"`;
+                if (topic.length > 100) {
+                    promptContext = `based on the following content: """${topic}"""`;
+                }
+
+                const prompt = `Create a highly detailed, professional, and comprehensive 5-slide presentation ${promptContext} in ${langName} language. 
                 The content must be deep, insightful, and well-structured. 
                 Each slide should have:
                 1. A clear 'title'
