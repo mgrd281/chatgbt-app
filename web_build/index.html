@@ -1006,11 +1006,19 @@
         .chat-history {
             flex: 1;
             overflow-y: auto;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            border-top: 1px solid var(--border);
-            padding-top: 10px;
+            margin-bottom: 10px;
+            padding-top: 5px;
             scrollbar-width: thin;
+            min-height: 100px;
+        }
+
+        .sidebar-section-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--text-secondary);
+            padding: 15px 10px 5px 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .history-item {
@@ -1145,8 +1153,14 @@
             <span id="presentationText">Präsentation</span>
         </div>
 
+        <div class="sidebar-section-label">Chats</div>
         <div class="chat-history" id="chatHistoryList">
-            <!-- History Items -->
+            <!-- Chat Items -->
+        </div>
+
+        <div class="sidebar-section-label">Presentations</div>
+        <div class="chat-history" id="presentationHistoryList">
+            <!-- Presentation Items -->
         </div>
 
         <div class="menu-item" onclick="toggleTheme()">
@@ -1568,6 +1582,15 @@
             allChats = [];
         }
         if (!Array.isArray(allChats)) allChats = [];
+
+        // Presentation History State
+        let allPresentations;
+        try {
+            allPresentations = JSON.parse(localStorage.getItem('allPresentations'));
+        } catch (e) {
+            allPresentations = [];
+        }
+        if (!Array.isArray(allPresentations)) allPresentations = [];
 
         let currentChatId = Date.now();
 
@@ -2129,7 +2152,57 @@
         // Initialize history on load
         window.addEventListener('load', () => {
             renderChatHistory();
+            renderPresentationHistory();
         });
+
+        // --- Presentation History Functions ---
+        function savePresentation(topic, slides) {
+            const pptData = {
+                id: Date.now(),
+                title: topic,
+                slides: slides,
+                timestamp: Date.now()
+            };
+            allPresentations.push(pptData);
+            localStorage.setItem('allPresentations', JSON.stringify(allPresentations));
+            renderPresentationHistory();
+        }
+
+        function renderPresentationHistory() {
+            const list = document.getElementById('presentationHistoryList');
+            list.innerHTML = '';
+
+            const sortedPpts = [...allPresentations].sort((a, b) => b.timestamp - a.timestamp);
+
+            sortedPpts.forEach(ppt => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.onclick = () => loadPresentation(ppt.id);
+                item.innerHTML = `
+                    <span style="display:flex; align-items:center; gap:5px;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+                        ${ppt.title}
+                    </span>
+                    <button class="delete-chat" onclick="deletePresentation(event, ${ppt.id})">&times;</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function loadPresentation(id) {
+            const ppt = allPresentations.find(p => p.id === id);
+            if (!ppt) return;
+            renderSlides(ppt.slides, 'warm'); // Defaulting to warm for now
+        }
+
+        function deletePresentation(e, id) {
+            e.stopPropagation();
+            if (confirm('Delete this presentation?')) {
+                allPresentations = allPresentations.filter(p => p.id !== id);
+                localStorage.setItem('allPresentations', JSON.stringify(allPresentations));
+                renderPresentationHistory();
+            }
+        }
 
         let selectedTemplate = 'warm';
 
@@ -2270,6 +2343,10 @@
                     content = content.replace(/```json/g, '').replace(/```/g, '').trim();
 
                     const slides = JSON.parse(content);
+
+                    // Save to history
+                    savePresentation(topic, slides);
+
                     renderSlides(slides, style);
                 }, 500);
 
