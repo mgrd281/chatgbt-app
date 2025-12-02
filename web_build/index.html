@@ -3440,6 +3440,8 @@
 
             chatContent.appendChild(div);
             chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: 'smooth' });
+
+            return div; // Return the element so we can remove it if needed (for loading messages)
         }
 
         async function handleImageSelect(input) {
@@ -3609,19 +3611,36 @@
                     // Check for Logo Generation
                     if (aiResponse.startsWith('LOGO_GEN:')) {
                         const imagePrompt = aiResponse.replace('LOGO_GEN:', '').trim();
+
+                        // Show "Generating..." message
+                        const genText = currentLanguage === 'de' ? 'Logo wird erstellt...' : (currentLanguage === 'ar' ? 'جاري تصميم الشعار...' : 'Generating logo...');
+                        const loadingMsg = addMessage('ai', `🎨 ${genText}`, null, false); // false = don't save yet
+
                         // Enhance prompt for logos
-                        const enhancedPrompt = `${imagePrompt}, vector logo, minimal, flat design, white background, high quality`;
+                        const enhancedPrompt = `${imagePrompt}, vector logo, minimal, flat design, white background, high quality, professional, geometric, modern`;
                         const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=512&height=512&nologo=true`;
 
-                        showGeneratedImage(imageUrl, imagePrompt, "Logo");
+                        // Remove loading message after a short delay to simulate processing, then show image
+                        setTimeout(() => {
+                            if (loadingMsg) loadingMsg.remove();
+                            showGeneratedImage(imageUrl, imagePrompt, "Logo");
+                        }, 1000);
 
                     } else if (aiResponse.startsWith('IMAGE_GEN:')) {
                         const imagePrompt = aiResponse.replace('IMAGE_GEN:', '').trim();
+
+                        // Show "Generating..." message
+                        const genText = currentLanguage === 'de' ? 'Bild wird generiert...' : (currentLanguage === 'ar' ? 'جاري إنشاء الصورة...' : 'Generating image...');
+                        const loadingMsg = addMessage('ai', `🎨 ${genText}`, null, false);
+
                         // Enhance prompt for general images
-                        const enhancedPrompt = `${imagePrompt}, high resolution, detailed, 4k`;
+                        const enhancedPrompt = `${imagePrompt}, masterpiece, best quality, ultra realistic, 8k, cinematic lighting, hdr, detailed texture, professional photography, award winning`;
                         const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=1024&height=1024&nologo=true`;
 
-                        showGeneratedImage(imageUrl, imagePrompt, "Image");
+                        setTimeout(() => {
+                            if (loadingMsg) loadingMsg.remove();
+                            showGeneratedImage(imageUrl, imagePrompt, "Image");
+                        }, 1000);
 
                     } else {
                         addMessage('ai', aiResponse);
