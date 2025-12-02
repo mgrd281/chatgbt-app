@@ -2568,8 +2568,12 @@
                 if (currentLanguage === 'ar') langInstruction = "لغة النظام هي العربية. أجب بالعربية افتراضياً، ما لم يطلب المستخدم لغة أخرى بوضوح.";
                 if (currentLanguage === 'uk') langInstruction = "Системна мова - українська. Відповідайте українською за замовчуванням, якщо користувач явно не попросить іншу мову.";
 
+                // Add Time Context
+                const now = new Date();
+                const timeContext = ` Current date and time: ${now.toLocaleString(currentLanguage)}.`;
+
                 // Combine with system prompt
-                const finalSystemContent = (systemPrompt ? systemPrompt + " " : "") + langInstruction;
+                const finalSystemContent = (systemPrompt ? systemPrompt + " " : "") + langInstruction + timeContext;
 
                 const systemMessage = { role: "system", content: finalSystemContent };
 
