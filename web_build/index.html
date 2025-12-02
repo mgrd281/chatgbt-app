@@ -1538,6 +1538,7 @@
     </div>
 
     <script>
+        console.log("Zen Chat v2.1 - Loaded at " + new Date().toISOString());
         marked.setOptions({ highlight: (code, lang) => hljs.highlightAuto(code).value });
 
         const chatContent = document.getElementById('chatContent');
