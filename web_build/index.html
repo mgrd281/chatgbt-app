@@ -1975,7 +1975,14 @@
             document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
         }
 
-        let allChats = JSON.parse(localStorage.getItem('allChats')) || [];
+        let allChats;
+        try {
+            allChats = JSON.parse(localStorage.getItem('allChats'));
+        } catch (e) {
+            allChats = [];
+        }
+        if (!Array.isArray(allChats)) allChats = [];
+
         let currentChatId = Date.now();
 
         function newChat() {
