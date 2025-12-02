@@ -1423,6 +1423,15 @@
             <span id="presentationText">Präsentation</span>
         </div>
 
+        <div class="menu-item" onclick="openContentCreator()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path>
+                <path d="M12 8v8"></path>
+                <path d="M8 12h8"></path>
+            </svg>
+            <span id="contentCreatorText">Content Creator</span>
+        </div>
+
         <div class="menu-item" onclick="newChat()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -1840,6 +1849,161 @@
                     <div class="play-icon"></div>
                     <span id="pptGenText">Erstellen</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Creator Modal -->
+    <div class="modal-overlay" id="contentCreatorModal">
+        <div class="modal"
+            style="width: 800px; max-width: 95vw; height: 80vh; padding: 0; display: flex; flex-direction: column; overflow: hidden;">
+
+            <!-- Header -->
+            <div
+                style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar);">
+                <h2 style="margin: 0; font-size: 1.2rem;">🎨 Content Creator Studio</h2>
+                <button onclick="document.getElementById('contentCreatorModal').style.display='none'"
+                    style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary);">&times;</button>
+            </div>
+
+            <!-- Body -->
+            <div style="display: flex; flex: 1; overflow: hidden;">
+                <!-- Sidebar Tabs -->
+                <div
+                    style="width: 200px; background: var(--bg-sidebar); border-right: 1px solid var(--border); padding: 10px;">
+                    <div class="settings-tab active" onclick="switchContentTab('social')" id="tabSocial">
+                        <span>📱 Social Media</span>
+                    </div>
+                    <div class="settings-tab" onclick="switchContentTab('marketing')" id="tabMarketing">
+                        <span>📢 Marketing</span>
+                    </div>
+                    <div class="settings-tab" onclick="switchContentTab('image')" id="tabImage">
+                        <span>🖼️ Image Gen</span>
+                    </div>
+                    <div class="settings-tab" onclick="switchContentTab('video')" id="tabVideo">
+                        <span>🎬 Video Script</span>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div style="flex: 1; padding: 20px; overflow-y: auto; background: var(--bg-body);">
+
+                    <!-- Social Media Tab -->
+                    <div id="content-social" class="content-tab active">
+                        <h3>Social Media Post Generator</h3>
+                        <div class="setting-group">
+                            <label class="setting-label">Platform</label>
+                            <select class="setting-input" id="socialPlatform">
+                                <option value="Instagram">Instagram</option>
+                                <option value="LinkedIn">LinkedIn</option>
+                                <option value="Twitter">Twitter / X</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="TikTok">TikTok Caption</option>
+                            </select>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Topic / Content</label>
+                            <textarea class="setting-input" id="socialTopic" rows="4"
+                                placeholder="What is this post about?"></textarea>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Tone</label>
+                            <select class="setting-input" id="socialTone">
+                                <option value="Professional">Professional</option>
+                                <option value="Casual">Casual</option>
+                                <option value="Funny">Funny</option>
+                                <option value="Inspirational">Inspirational</option>
+                                <option value="Sales">Sales / Promotional</option>
+                            </select>
+                        </div>
+                        <button class="save-btn" onclick="generateContent('social')">Generate Post</button>
+                        <div id="socialOutput" class="code-block-wrapper" style="display:none; margin-top:20px;">
+                            <div class="code-header">Generated Post <button class="copy-btn"
+                                    onclick="copyContent('socialResult')">Copy</button></div>
+                            <pre id="socialResult" style="white-space: pre-wrap;"></pre>
+                        </div>
+                    </div>
+
+                    <!-- Marketing Tab -->
+                    <div id="content-marketing" class="content-tab" style="display:none;">
+                        <h3>Marketing Campaign Planner</h3>
+                        <div class="setting-group">
+                            <label class="setting-label">Product / Service</label>
+                            <input type="text" class="setting-input" id="marketProduct"
+                                placeholder="e.g. New Coffee Machine">
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Target Audience</label>
+                            <input type="text" class="setting-input" id="marketAudience"
+                                placeholder="e.g. Coffee lovers, Office workers">
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Goal</label>
+                            <input type="text" class="setting-input" id="marketGoal"
+                                placeholder="e.g. Increase sales by 20%">
+                        </div>
+                        <button class="save-btn" onclick="generateContent('marketing')">Generate Campaign</button>
+                        <div id="marketOutput" class="code-block-wrapper" style="display:none; margin-top:20px;">
+                            <div class="code-header">Campaign Strategy <button class="copy-btn"
+                                    onclick="copyContent('marketResult')">Copy</button></div>
+                            <pre id="marketResult" style="white-space: pre-wrap;"></pre>
+                        </div>
+                    </div>
+
+                    <!-- Image Gen Tab -->
+                    <div id="content-image" class="content-tab" style="display:none;">
+                        <h3>AI Image Generator</h3>
+                        <div class="setting-group">
+                            <label class="setting-label">Image Description</label>
+                            <textarea class="setting-input" id="imgPrompt" rows="3"
+                                placeholder="Describe the image you want..."></textarea>
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Style</label>
+                            <select class="setting-input" id="imgStyle">
+                                <option value="photorealistic">Photorealistic</option>
+                                <option value="anime">Anime</option>
+                                <option value="digital art">Digital Art</option>
+                                <option value="oil painting">Oil Painting</option>
+                                <option value="cyberpunk">Cyberpunk</option>
+                                <option value="logo">Logo / Icon</option>
+                            </select>
+                        </div>
+                        <button class="save-btn" onclick="generateContent('image')">Generate Image</button>
+                        <div id="imgOutput" style="display:none; margin-top:20px; text-align:center;">
+                            <img id="imgResult" src=""
+                                style="max-width:100%; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                            <div style="margin-top:10px;">
+                                <button class="save-btn" style="width:auto; display:inline-block;"
+                                    onclick="downloadImage()">Download</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video Script Tab -->
+                    <div id="content-video" class="content-tab" style="display:none;">
+                        <h3>Video Script & Concept</h3>
+                        <div class="setting-group">
+                            <label class="setting-label">Video Topic</label>
+                            <input type="text" class="setting-input" id="videoTopic" placeholder="e.g. Product Review">
+                        </div>
+                        <div class="setting-group">
+                            <label class="setting-label">Platform / Format</label>
+                            <select class="setting-input" id="videoFormat">
+                                <option value="TikTok/Reels (Vertical 15-60s)">TikTok / Reels (Vertical)</option>
+                                <option value="YouTube (Horizontal 5-10m)">YouTube (Horizontal)</option>
+                                <option value="Ad (Short 15s)">Commercial Ad</option>
+                            </select>
+                        </div>
+                        <button class="save-btn" onclick="generateContent('video')">Generate Script</button>
+                        <div id="videoOutput" class="code-block-wrapper" style="display:none; margin-top:20px;">
+                            <div class="code-header">Video Script <button class="copy-btn"
+                                    onclick="copyContent('videoResult')">Copy</button></div>
+                            <pre id="videoResult" style="white-space: pre-wrap;"></pre>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -3118,6 +3282,142 @@
                 localStorage.setItem('allPresentations', JSON.stringify(allPresentations));
                 renderPresentationHistory();
             }
+        }
+
+        // --- Content Creator Functions ---
+        function openContentCreator() {
+            document.getElementById('contentCreatorModal').style.display = 'flex';
+        }
+
+        function switchContentTab(tab) {
+            // Update Sidebar
+            document.querySelectorAll('#contentCreatorModal .settings-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+
+            // Update Content
+            document.querySelectorAll('.content-tab').forEach(c => c.style.display = 'none');
+            document.getElementById('content-' + tab).style.display = 'block';
+        }
+
+        async function generateContent(type) {
+            if (!apiKey) {
+                alert("Please enter API Key in Settings first.");
+                return;
+            }
+
+            let prompt = "";
+            let outputId = "";
+            let resultId = "";
+            let loadingText = "Generating...";
+
+            if (type === 'social') {
+                const platform = document.getElementById('socialPlatform').value;
+                const topic = document.getElementById('socialTopic').value;
+                const tone = document.getElementById('socialTone').value;
+                if (!topic) return alert("Please enter a topic.");
+
+                prompt = `Write a ${tone} social media post for ${platform} about: "${topic}". Include emojis and hashtags.`;
+                outputId = 'socialOutput';
+                resultId = 'socialResult';
+            }
+            else if (type === 'marketing') {
+                const product = document.getElementById('marketProduct').value;
+                const audience = document.getElementById('marketAudience').value;
+                const goal = document.getElementById('marketGoal').value;
+                if (!product) return alert("Please enter a product.");
+
+                prompt = `Create a comprehensive marketing campaign strategy for "${product}". Target Audience: ${audience}. Goal: ${goal}. Include Key Messages, Channels, and a Timeline.`;
+                outputId = 'marketOutput';
+                resultId = 'marketResult';
+            }
+            else if (type === 'video') {
+                const topic = document.getElementById('videoTopic').value;
+                const format = document.getElementById('videoFormat').value;
+                if (!topic) return alert("Please enter a topic.");
+
+                prompt = `Write a detailed video script for a ${format} video about: "${topic}". Include Scene descriptions, Camera angles, and Dialogue/Voiceover.`;
+                outputId = 'videoOutput';
+                resultId = 'videoResult';
+            }
+            else if (type === 'image') {
+                const desc = document.getElementById('imgPrompt').value;
+                const style = document.getElementById('imgStyle').value;
+                if (!desc) return alert("Please enter a description.");
+
+                const btn = document.querySelector('#content-image button');
+                const originalText = btn.innerText;
+                btn.innerText = "Generating...";
+                btn.disabled = true;
+
+                let enhancedPrompt = desc;
+                if (style === 'logo') {
+                    enhancedPrompt += ", vector logo, minimal, flat design, white background, high quality";
+                } else {
+                    enhancedPrompt += `, ${style}, masterpiece, best quality, ultra realistic, 8k, cinematic lighting`;
+                }
+
+                const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=1024&height=1024&nologo=true`;
+
+                // Pre-load image
+                const img = new Image();
+                img.onload = () => {
+                    document.getElementById('imgResult').src = imageUrl;
+                    document.getElementById('imgOutput').style.display = 'block';
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                };
+                img.src = imageUrl;
+                return; // Exit for image
+            }
+
+            // Text Generation Logic
+            const btn = document.querySelector(`#content-${type} button`);
+            const originalText = btn.innerText;
+            btn.innerText = "Generating...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4o",
+                        messages: [{ role: "user", content: prompt }]
+                    })
+                });
+
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+
+                const content = data.choices[0].message.content;
+                document.getElementById(resultId).innerText = content;
+                document.getElementById(outputId).style.display = 'block';
+
+            } catch (e) {
+                alert("Error: " + e.message);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function copyContent(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Copied to clipboard!");
+            });
+        }
+
+        function downloadImage() {
+            const src = document.getElementById('imgResult').src;
+            const a = document.createElement('a');
+            a.href = src;
+            a.download = `zenith-content-${Date.now()}.jpg`;
+            a.target = '_blank';
+            a.click();
         }
 
         let selectedTemplate = 'warm';
