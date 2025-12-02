@@ -2045,51 +2045,49 @@
     <!-- Library Modal -->
     <div id="libraryModal" class="modal-overlay">
         <div class="modal-content"
-            style="max-width: 900px; height: 85vh; display:flex; flex-direction:column; padding: 0; overflow: hidden;">
+            style="max-width: 800px; height: 80vh; display:flex; flex-direction:column; padding: 0; overflow: hidden; background: var(--bg-color);">
+
+            <!-- Header -->
             <div class="modal-header"
-                style="padding: 20px; border-bottom: 1px solid var(--border); background: var(--bg-color);">
-                <h2 style="margin:0; display:flex; align-items:center; gap:10px;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                style="padding: 15px 20px; border-bottom: 1px solid var(--border); background: var(--bg-color); display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="margin:0; display:flex; align-items:center; gap:10px; font-size: 18px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                     </svg>
                     Bibliothek
                 </h2>
-                <button class="close-btn"
-                    onclick="document.getElementById('libraryModal').style.display='none'">&times;</button>
+                <button class="close-btn" onclick="document.getElementById('libraryModal').style.display='none'"
+                    style="font-size:24px;">&times;</button>
             </div>
 
-            <div style="display: flex; flex: 1; overflow: hidden;">
-                <!-- Sidebar Filters -->
-                <div
-                    style="width: 220px; background: var(--bg-color); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 5px;">
-                    <div style="position: relative; margin-bottom: 15px;">
-                        <input type="text" id="libSearch" placeholder="Suchen..." oninput="renderLibrary()"
-                            style="width: 100%; padding: 10px 10px 10px 35px; border-radius: 8px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-primary); font-size: 14px;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2"
-                            style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.5;">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </div>
-
-                    <button class="lib-filter-btn active" onclick="setLibFilter('all', this)">
-                        <span>📑</span> Alle
-                    </button>
-                    <button class="lib-filter-btn" onclick="setLibFilter('image', this)">
-                        <span>🖼️</span> Bilder
-                    </button>
-                    <button class="lib-filter-btn" onclick="setLibFilter('text', this)">
-                        <span>📝</span> Texte / Prompts
-                    </button>
+            <!-- Controls (Search & Filters) -->
+            <div
+                style="padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: center; background: var(--input-bg);">
+                <div style="position: relative; flex: 1;">
+                    <input type="text" id="libSearch" placeholder="Suchen..." oninput="renderLibrary()"
+                        style="width: 100%; padding: 8px 10px 8px 30px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-color); color: var(--text-primary); font-size: 13px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.5;">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
                 </div>
 
-                <!-- Grid -->
-                <div id="libraryList"
-                    style="flex: 1; overflow-y: auto; padding: 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; align-content: start; background: var(--input-bg);">
-                    <!-- Items -->
+                <div style="display:flex; gap:5px;">
+                    <button class="lib-filter-btn active" onclick="setLibFilter('all', this)"
+                        style="padding: 6px 12px; font-size: 13px; border-radius: 6px;">Alle</button>
+                    <button class="lib-filter-btn" onclick="setLibFilter('image', this)"
+                        style="padding: 6px 12px; font-size: 13px; border-radius: 6px;">Bilder</button>
+                    <button class="lib-filter-btn" onclick="setLibFilter('text', this)"
+                        style="padding: 6px 12px; font-size: 13px; border-radius: 6px;">Texte</button>
                 </div>
+            </div>
+
+            <!-- Grid Content -->
+            <div id="libraryList"
+                style="flex: 1; overflow-y: auto; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; align-content: start; background: var(--bg-color);">
+                <!-- Items -->
             </div>
         </div>
     </div>
