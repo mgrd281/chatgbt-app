@@ -363,14 +363,15 @@
             border-right: var(--glass-border);
             display: flex;
             flex-direction: column;
-            padding: 1.5rem 1rem;
+            padding: 1.5rem 1rem 2rem 1rem;
+            /* Increased bottom padding */
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 100;
             box-shadow: var(--shadow-lg);
             height: 100vh;
-            /* Ensure full height */
+            height: 100dvh;
+            /* Use dynamic viewport height for mobile browsers */
             overflow: hidden;
-            /* Prevent outer scroll */
         }
 
         /* Scrollable Middle Section */
@@ -390,6 +391,8 @@
             border-top: 1px solid var(--border);
             padding-top: 1rem;
             background: var(--sidebar-bg);
+            padding-bottom: env(safe-area-inset-bottom);
+            /* Handle iPhone home bar */
             /* Ensure background covers content behind */
         }
 
@@ -551,11 +554,27 @@
             display: block;
         }
 
+        /* Settings Modal Specifics */
+        #settingsModal .modal {
+            width: 800px;
+            max-width: 95vw;
+            height: 85vh;
+            /* Fixed height for consistency */
+            max-height: 800px;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
         /* New Settings Modal Styles */
         .settings-container {
             display: flex;
-            height: 500px;
-            max-height: 80vh;
+            flex: 1;
+            /* Take remaining space */
+            min-height: 0;
+            /* Allow shrinking */
+            background: var(--bg-body);
         }
 
         .settings-sidebar {
@@ -565,6 +584,8 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+            overflow-y: auto;
+            /* Allow sidebar to scroll if needed */
         }
 
         .settings-tab {
