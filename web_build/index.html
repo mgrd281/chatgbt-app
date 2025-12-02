@@ -1494,7 +1494,7 @@
                 <path d="M10 15.5a2.5 2.5 0 0 0 4 0"></path>
             </svg>
             <span
-                style="background: linear-gradient(45deg, #2563eb, #1d4ed8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: -0.5px; margin-left: 10px; font-size: 20px;">Zenith
+                style="background: linear-gradient(45deg, #2563eb, #1d4ed8); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: -0.5px; margin-left: 10px; font-size: 20px;">Zenith
                 AI</span>
         </div>
 
@@ -1758,39 +1758,58 @@
 
                         <div class="setting-group">
                             <label class="setting-label" id="subLabel">Abonnement</label>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                                <!-- Plan 1 -->
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <!-- Trial Plan -->
                                 <div
-                                    style="padding: 15px 10px; border: 1px solid var(--border); border-radius: 8px; text-align: center; background: var(--input-bg);">
-                                    <div style="font-weight: 600; margin-bottom: 10px; font-size: 14px;"
-                                        id="plan1Title">Basic</div>
-                                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
-                                        Free</div>
-                                    <button id="plan1Btn"
-                                        style="background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%;">Abonnieren</button>
+                                    style="padding: 15px; border: 2px solid #6366f1; border-radius: 12px; background: rgba(99, 102, 241, 0.05); display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="font-weight: 700; color: #6366f1; font-size: 16px;">3-Day Free Trial
+                                        </div>
+                                        <div style="font-size: 13px; color: var(--text-secondary);">Full access to all
+                                            features for 3 days. No credit card required.</div>
+                                    </div>
+                                    <button onclick="selectPlan('trial')"
+                                        style="background: #6366f1; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;">Start
+                                        Trial</button>
                                 </div>
-                                <!-- Plan 2 -->
-                                <div
-                                    style="padding: 15px 10px; border: 1px solid var(--accent); border-radius: 8px; text-align: center; background: var(--input-bg); position: relative;">
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                                    <!-- Plan 1 -->
                                     <div
-                                        style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; font-size: 10px; padding: 2px 8px; border-radius: 10px;">
-                                        Popular</div>
-                                    <div style="font-weight: 600; margin-bottom: 10px; font-size: 14px;"
-                                        id="plan2Title">Pro</div>
-                                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
-                                        $9.99/mo</div>
-                                    <button id="plan2Btn"
-                                        style="background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%;">Abonnieren</button>
-                                </div>
-                                <!-- Plan 3 -->
-                                <div
-                                    style="padding: 15px 10px; border: 1px solid var(--border); border-radius: 8px; text-align: center; background: var(--input-bg);">
-                                    <div style="font-weight: 600; margin-bottom: 10px; font-size: 14px;"
-                                        id="plan3Title">Ultra</div>
-                                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
-                                        $19.99/mo</div>
-                                    <button id="plan3Btn"
-                                        style="background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%;">Abonnieren</button>
+                                        style="padding: 15px 10px; border: 1px solid var(--border); border-radius: 8px; text-align: center; background: var(--input-bg);">
+                                        <div style="font-weight: 600; margin-bottom: 10px; font-size: 14px;"
+                                            id="plan1Title">Basic</div>
+                                        <div
+                                            style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
+                                            Free</div>
+                                        <button id="plan1Btn" onclick="selectPlan('basic')"
+                                            style="background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%;">Abonnieren</button>
+                                    </div>
+                                    <!-- Plan 2 -->
+                                    <div
+                                        style="padding: 15px 10px; border: 1px solid var(--accent); border-radius: 8px; text-align: center; background: var(--input-bg); position: relative;">
+                                        <div
+                                            style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; font-size: 10px; padding: 2px 8px; border-radius: 10px;">
+                                            Popular</div>
+                                        <div style="font-weight: 600; margin-bottom: 10px; font-size: 14px;"
+                                            id="plan2Title">Pro</div>
+                                        <div
+                                            style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
+                                            $9.99/mo</div>
+                                        <button id="plan2Btn" onclick="selectPlan('pro')"
+                                            style="background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%;">Abonnieren</button>
+                                    </div>
+                                    <!-- Plan 3 -->
+                                    <div
+                                        style="padding: 15px 10px; border: 1px solid var(--border); border-radius: 8px; text-align: center; background: var(--input-bg);">
+                                        <div style="font-weight: 600; margin-bottom: 10px; font-size: 14px;"
+                                            id="plan3Title">Ultra</div>
+                                        <div
+                                            style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
+                                            $19.99/mo</div>
+                                        <button id="plan3Btn" onclick="selectPlan('ultra')"
+                                            style="background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%;">Abonnieren</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2980,7 +2999,8 @@
 
         function selectPlan(planName) {
             localStorage.setItem('selectedPlan', planName);
-            alert(`Plan selected: ${planName}`);
+            const planDisplay = planName === 'trial' ? '3-Day Free Trial' : planName.charAt(0).toUpperCase() + planName.slice(1);
+            alert(`Plan selected: ${planDisplay}. Click "Save & Close" to activate.`);
         }
 
         function toggleSidebar() {

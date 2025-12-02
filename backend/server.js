@@ -42,7 +42,9 @@ const initDb = async () => {
         subscription_plan TEXT,
         subscription_status TEXT,
         device_info TEXT,
-        created_at BIGINT
+        created_at BIGINT,
+        subscription_start BIGINT,
+        subscription_end BIGINT
       );
     `);
 
@@ -52,6 +54,8 @@ const initDb = async () => {
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status TEXT;`);
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS device_info TEXT;`);
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at BIGINT;`);
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_start BIGINT;`);
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_end BIGINT;`);
         } catch (e) { console.log("Migration note: Columns might already exist"); }
 
         console.log("Database Tables Ready.");
@@ -85,17 +89,32 @@ app.post('/api/user', async (req, res) => {
     try {
         if (email) {
             const now = Date.now();
+            let subEnd = null;
+            let subStatus = 'active';
+
+            // Calculate Subscription End Date
+            if (subscription_plan === 'trial') {
+                subEnd = now + (3 * 24 * 60 * 60 * 1000); // 3 Days
+            } else if (subscription_plan === 'pro' || subscription_plan === 'ultra') {
+                subEnd = now + (30 * 24 * 60 * 60 * 1000); // 30 Days
+            } else {
+                subStatus = 'free'; // Basic/Free
+            }
+
             await pool.query(
-                `INSERT INTO users (email, phone, settings, last_active, subscription_plan, subscription_status, device_info, created_at) 
-                 VALUES ($1, $2, $3, $4, $5, 'active', $6, $7) 
+                `INSERT INTO users (email, phone, settings, last_active, subscription_plan, subscription_status, device_info, created_at, subscription_start, subscription_end) 
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $4, $9) 
                  ON CONFLICT (email) 
                  DO UPDATE SET 
                     phone = $2, 
                     settings = $3, 
                     last_active = $4,
                     subscription_plan = $5,
-                    device_info = $6`,
-                [email, phone, JSON.stringify(settings), now, subscription_plan || 'free', device_info, now]
+                    subscription_status = $6,
+                    device_info = $7,
+                    subscription_start = CASE WHEN users.subscription_plan != $5 THEN $4 ELSE users.subscription_start END,
+                    subscription_end = CASE WHEN users.subscription_plan != $5 THEN $9 ELSE users.subscription_end END`,
+                [email, phone, JSON.stringify(settings), now, subscription_plan || 'free', subStatus, device_info, now, subEnd]
             );
         }
         res.json({ success: true });
