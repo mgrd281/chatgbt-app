@@ -2375,9 +2375,55 @@
             } else {
                 allChats.push(chatData);
             }
-
             localStorage.setItem('allChats', JSON.stringify(allChats));
             renderChatHistory();
+        }
+
+        function speakText(btn) {
+            const msgContent = btn.closest('.message-content');
+            const textDiv = msgContent.querySelector('.message-text');
+            const text = textDiv.getAttribute('data-raw-text') || textDiv.innerText;
+
+            if ('speechSynthesis' in window) {
+                // Cancel current speech
+                speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                // Detect language
+                if (currentLanguage === 'de') utterance.lang = 'de-DE';
+                else if (currentLanguage === 'ar') utterance.lang = 'ar-SA';
+                else if (currentLanguage === 'uk') utterance.lang = 'uk-UA';
+                else utterance.lang = 'en-US';
+
+                speechSynthesis.speak(utterance);
+            } else {
+                alert("Text-to-Speech not supported in this browser.");
+            }
+        }
+
+        function exportChat() {
+            if (conversationHistory.length === 0) {
+                alert("No chat to export.");
+                return;
+            }
+
+            let exportText = "Zen Chat Export\n\n";
+            conversationHistory.forEach(msg => {
+                let content = msg.content;
+                if (Array.isArray(content)) {
+                    content = content.map(c => c.type === 'text' ? c.text : '[Image]').join(' ');
+                }
+                exportText += `[${msg.role.toUpperCase()}]: ${content}\n\n`;
+            });
+
+            const blob = new Blob([exportText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `zen-chat-export-${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
         function renderChatHistory() {
