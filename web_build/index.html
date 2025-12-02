@@ -1995,11 +1995,23 @@
                                 <option value="Ad (Short 15s)">Commercial Ad</option>
                             </select>
                         </div>
-                        <button class="save-btn" onclick="generateContent('video')">Generate Script</button>
+                        <div style="display:flex; gap:10px;">
+                            <button class="save-btn" onclick="generateContent('video')">Generate Script</button>
+                            <button class="save-btn"
+                                style="background: var(--input-bg); color: var(--text-primary); border: 1px solid var(--border);"
+                                onclick="generateContent('video_thumb')">Generate Thumbnail</button>
+                        </div>
+
                         <div id="videoOutput" class="code-block-wrapper" style="display:none; margin-top:20px;">
                             <div class="code-header">Video Script <button class="copy-btn"
                                     onclick="copyContent('videoResult')">Copy</button></div>
                             <pre id="videoResult" style="white-space: pre-wrap;"></pre>
+                        </div>
+
+                        <div id="videoThumbOutput" style="display:none; margin-top:20px; text-align:center;">
+                            <h4>Video Thumbnail</h4>
+                            <img id="videoThumbResult" src=""
+                                style="max-width:100%; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
                         </div>
                     </div>
 
@@ -3338,6 +3350,28 @@
                 prompt = `Write a detailed video script for a ${format} video about: "${topic}". Include Scene descriptions, Camera angles, and Dialogue/Voiceover.`;
                 outputId = 'videoOutput';
                 resultId = 'videoResult';
+            }
+            else if (type === 'video_thumb') {
+                const topic = document.getElementById('videoTopic').value;
+                if (!topic) return alert("Please enter a topic.");
+
+                const btn = document.querySelectorAll('#content-video button')[1];
+                const originalText = btn.innerText;
+                btn.innerText = "Generating...";
+                btn.disabled = true;
+
+                const enhancedPrompt = `youtube thumbnail for video about ${topic}, high quality, 4k, clickbait, catchy, vibrant colors, professional design`;
+                const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=1280&height=720&nologo=true`;
+
+                const img = new Image();
+                img.onload = () => {
+                    document.getElementById('videoThumbResult').src = imageUrl;
+                    document.getElementById('videoThumbOutput').style.display = 'block';
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                };
+                img.src = imageUrl;
+                return;
             }
             else if (type === 'image') {
                 const desc = document.getElementById('imgPrompt').value;
