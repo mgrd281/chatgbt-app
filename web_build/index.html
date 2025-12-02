@@ -3315,20 +3315,37 @@
             // Clone container to modify for PDF
             const clone = container.cloneNode(true);
 
+            // Get computed background color of the original container to ensure theme matches
+            const computedStyle = window.getComputedStyle(container);
+            const bgColor = computedStyle.backgroundColor;
+            const color = computedStyle.color;
+
             // Style clone for PDF (vertical layout, page breaks)
             clone.style.display = 'block';
-            clone.style.width = '800px'; // Fixed width for PDF
+            clone.style.width = '1123px'; // A4 Landscape width approx (in px at 96dpi)
             clone.style.height = 'auto';
             clone.style.overflow = 'visible';
-            clone.style.background = 'black'; // Ensure background matches
+            clone.style.background = bgColor;
+            clone.style.color = color;
+            clone.classList.add(container.className); // Ensure theme class is preserved
 
             const slides = clone.querySelectorAll('.slide');
             slides.forEach(slide => {
                 slide.style.width = '100%';
-                slide.style.height = '600px'; // Fixed height per slide (landscape)
+                slide.style.height = '794px'; // A4 Landscape height approx
                 slide.style.pageBreakAfter = 'always';
                 slide.style.flex = 'none';
                 slide.style.marginBottom = '0';
+                slide.style.border = 'none'; // Remove borders for clean PDF
+                slide.style.boxShadow = 'none';
+
+                // Ensure images are visible
+                const imgs = slide.querySelectorAll('img');
+                imgs.forEach(img => {
+                    img.style.maxWidth = '100%';
+                    img.style.height = 'auto';
+                    img.style.display = 'block';
+                });
             });
 
             // Create temp wrapper
@@ -3336,26 +3353,36 @@
             wrapper.style.position = 'absolute';
             wrapper.style.top = '-9999px';
             wrapper.style.left = '0';
+            wrapper.style.width = '1123px'; // Match clone width
             wrapper.appendChild(clone);
             document.body.appendChild(wrapper);
 
             const opt = {
                 margin: 0,
-                filename: 'zen-presentation.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'px', format: [800, 600], orientation: 'landscape' }
+                filename: `zenith-presentation-${Date.now()}.pdf`,
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    letterRendering: true,
+                    backgroundColor: bgColor // Set background in canvas
+                },
+                jsPDF: { unit: 'px', format: [1123, 794], orientation: 'landscape' } // A4 Landscape
             };
 
-            html2pdf().set(opt).from(clone).save().then(() => {
-                document.body.removeChild(wrapper);
-                btn.innerHTML = originalText;
-            }).catch(err => {
-                console.error(err);
-                alert("PDF Export failed");
-                btn.innerHTML = originalText;
-                document.body.removeChild(wrapper);
-            });
+            // Small delay to ensure DOM is ready
+            setTimeout(() => {
+                html2pdf().set(opt).from(clone).save().then(() => {
+                    document.body.removeChild(wrapper);
+                    btn.innerHTML = originalText;
+                }).catch(err => {
+                    console.error(err);
+                    alert("PDF Export failed");
+                    btn.innerHTML = originalText;
+                    document.body.removeChild(wrapper);
+                });
+            }, 500);
         }
 
         function verifyPin() {
