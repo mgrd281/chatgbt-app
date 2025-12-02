@@ -1002,6 +1002,25 @@
             margin-right: 8px;
         }
 
+        /* Slide Animations */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-animate {
+            animation: slideInUp 0.6s ease-out forwards;
+            opacity: 0;
+            /* Start hidden */
+        }
+
         /* Code Blocks & Copy */
         .code-block-wrapper {
             position: relative;
@@ -2607,25 +2626,20 @@
             chatContent.appendChild(loadingDiv);
             chatArea.scrollTop = chatArea.scrollHeight;
 
-            // Simulate progress
-            const progressBar = loadingDiv.querySelector('#pptProgress');
-            const statusText = loadingDiv.querySelector('#pptStatus');
-            const timeText = loadingDiv.querySelector('#pptTime');
+            // Simulate "Thinking" and "Researching" - Longer Duration
             let progress = 0;
-
             const interval = setInterval(() => {
-                progress += Math.random() * 2;
+                progress += 2; // Slower progress (was 5)
                 if (progress > 95) progress = 95;
-
-                progressBar.style.width = progress + '%';
-                timeText.innerText = Math.round(progress) + '%';
+                progressBar.style.width = `${progress}%`;
+                timeText.innerText = `${progress}%`;
 
                 if (progress < 30) statusText.innerText = "Researching content...";
                 else if (progress < 60) statusText.innerText = "Structuring slides...";
-                else if (progress < 80) statusText.innerText = "Refining design...";
-                else statusText.innerText = "Finalizing...";
+                else if (progress < 85) statusText.innerText = "Designing layout...";
+                else statusText.innerText = "Finalizing presentation...";
 
-            }, 300); // Update every 300ms
+            }, 150); // Slower interval (was 100)
 
             try {
                 let langName = "English";
@@ -2633,14 +2647,6 @@
                 if (currentLanguage === 'ar') langName = "Arabic";
                 if (currentLanguage === 'uk') langName = "Ukrainian";
 
-                // Enhanced Prompt for better quality
-                // Enhanced Prompt for better quality with images
-                let promptContext = `about "${topic}"`;
-                if (topic.length > 100) {
-                    promptContext = `based on the following content: """${topic}"""`;
-                }
-
-                // Enhanced Prompt for better quality with images and layouts
                 const prompt = `Create a highly detailed, professional, and comprehensive 5-slide presentation ${promptContext} in ${langName} language. 
                 
                 For each slide, choose the best layout based on the content:
@@ -2725,7 +2731,8 @@
 
             slides.forEach((slide, index) => {
                 const slideEl = document.createElement('div');
-                slideEl.className = 'slide';
+                slideEl.className = 'slide slide-animate'; // Add animation class
+                slideEl.style.animationDelay = `${index * 0.2}s`; // Staggered animation
 
                 // Make content editable
                 slideEl.contentEditable = "true";
