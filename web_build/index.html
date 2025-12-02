@@ -431,7 +431,13 @@
             border-top: 1px solid rgba(255, 255, 255, 0.6);
             display: flex;
             justify-content: center;
-            /* Center the input box */
+            width: 100%;
+        }
+
+        .input-box-wrapper {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .input-box {
@@ -1678,43 +1684,45 @@
                                 style="position: absolute; top: -5px; right: -5px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px;">&times;</button>
                         </div>
                     </div>
-                    <div class="input-box"
-                        style="display: flex; align-items: center; padding: 6px 16px; border-radius: 50px; border: 2px solid #ff6b00; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                        <button class="icon-btn" onclick="document.getElementById('imageInput').click()"
-                            style="width: 32px; height: 32px; border-radius: 50%; background: transparent; color: #666; margin-right: 8px;">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                        </button>
-                        <input type="file" id="imageInput" accept="image/*" style="display: none;"
-                            onchange="handleImageSelect(this)">
-
-                        <textarea id="input" rows="1" placeholder="Stelle irgendeine Frage"
-                            style="flex: 1; border: none; background: transparent; outline: none; resize: none; padding: 10px; font-size: 16px; color: #333;"></textarea>
-
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <button class="icon-btn" onclick="toggleVoice()" id="micBtn"
-                                style="width: 32px; height: 32px; border-radius: 50%; background: transparent; color: #666;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    <div class="input-box-wrapper">
+                        <div class="input-box"
+                            style="display: flex; align-items: center; padding: 6px 16px; border-radius: 50px; border: 2px solid #ff6b00; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                            <button class="icon-btn" onclick="document.getElementById('imageInput').click()"
+                                style="width: 32px; height: 32px; border-radius: 50%; background: transparent; color: #666; margin-right: 8px;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
-                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                    <line x1="12" y1="19" x2="12" y2="23"></line>
-                                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
                                 </svg>
                             </button>
+                            <input type="file" id="imageInput" accept="image/*" style="display: none;"
+                                onchange="handleImageSelect(this)">
 
-                            <button class="send-btn" onclick="sendMessage()"
-                                style="width: 40px; height: 40px; border-radius: 50%; background: black; color: white; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path>
-                                    <path d="M8 12h8"></path>
-                                    <path d="M12 8v8"></path>
-                                </svg>
-                            </button>
+                            <textarea id="input" rows="1" placeholder="Stelle irgendeine Frage"
+                                style="flex: 1; border: none; background: transparent; outline: none; resize: none; padding: 10px; font-size: 16px; color: #333;"></textarea>
+
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <button class="icon-btn" onclick="toggleVoice()" id="micBtn"
+                                    style="width: 32px; height: 32px; border-radius: 50%; background: transparent; color: #666;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                                    </svg>
+                                </button>
+
+                                <button class="send-btn" onclick="sendMessage()"
+                                    style="width: 40px; height: 40px; border-radius: 50%; background: black; color: white; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"></path>
+                                        <path d="M8 12h8"></path>
+                                        <path d="M12 8v8"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div id="disclaimer"
