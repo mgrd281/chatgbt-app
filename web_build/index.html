@@ -2860,6 +2860,17 @@
                 localStorage.setItem('systemPrompt', systemPrompt);
                 localStorage.setItem('language', currentLanguage);
 
+                // Save to Cloud
+                const email = document.getElementById('emailInput').value;
+                const phone = document.getElementById('phoneInput').value;
+                const settings = {
+                    systemPrompt,
+                    language: currentLanguage,
+                    audioMode: localStorage.getItem('audioMode') === 'true',
+                    apiKey: apiKey
+                };
+                StorageService.saveUserProfile(email, phone, settings);
+
                 updateUILanguage(currentLanguage);
 
                 settingsModal.style.display = 'none';
@@ -3267,6 +3278,19 @@
                     try {
                         await fetch(`${API_URL}/presentations/${id}`, { method: 'DELETE' });
                     } catch (e) { console.error("Delete ppt failed", e); }
+                }
+            },
+
+            async saveUserProfile(email, phone, settings) {
+                if (useCloud && email) {
+                    try {
+                        await fetch(`${API_URL}/user`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, phone, settings })
+                        });
+                        console.log("User profile saved to cloud");
+                    } catch (e) { console.error("Save user profile failed", e); }
                 }
             }
         };
