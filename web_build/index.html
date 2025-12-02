@@ -21,38 +21,45 @@
         rel="stylesheet">
     <style>
         :root {
-            --bg-body: #ffffff;
-            --bg-sidebar: #f8fafc;
-            --bg-header: rgba(255, 255, 255, 0.9);
-            --text-primary: #1e293b;
+            --bg-body: #f8fafc;
+            --bg-sidebar: rgba(255, 255, 255, 0.8);
+            --bg-header: rgba(255, 255, 255, 0.8);
+            --text-primary: #0f172a;
             --text-secondary: #64748b;
-            --accent: #4f46e5;
-            --accent-gradient: linear-gradient(135deg, #4f46e5, #6366f1);
-            --bubble-user: #4f46e5;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --accent-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --bubble-user: #6366f1;
             --bubble-user-text: #ffffff;
-            --bubble-ai: #f8fafc;
-            --bubble-ai-text: #1e293b;
+            --bubble-ai: #ffffff;
+            --bubble-ai-text: #0f172a;
             --border: #e2e8f0;
-            --input-bg: #f8fafc;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            --success: #10b981;
-            --warning: #f59e0b;
+            --input-bg: rgba(255, 255, 255, 0.9);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+            --blur: blur(20px);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
         }
 
         [data-theme="dark"] {
             --bg-body: #0f172a;
-            --bg-sidebar: #1e293b;
-            --bg-header: rgba(15, 23, 42, 0.9);
+            --bg-sidebar: rgba(15, 23, 42, 0.8);
+            --bg-header: rgba(15, 23, 42, 0.8);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --accent: #6366f1;
+            --accent: #818cf8;
+            --accent-hover: #6366f1;
             --bubble-user: #6366f1;
             --bubble-ai: #1e293b;
             --bubble-ai-text: #f8fafc;
             --border: #334155;
-            --input-bg: #1e293b;
+            --input-bg: rgba(30, 41, 59, 0.9);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         body {
@@ -79,15 +86,21 @@
         }
 
         /* Sidebar (Desktop) */
+        /* Sidebar (Desktop) - Consolidated */
         .sidebar {
-            width: 260px;
+            width: 280px;
             background: var(--bg-sidebar);
-            border-right: 1px solid var(--border);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border-right: var(--glass-border);
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            transition: transform 0.3s ease;
+            padding: 1.5rem 1rem;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 100;
+            height: 100vh;
+            height: 100dvh;
+            box-shadow: var(--shadow-lg);
         }
 
         @media (max-width: 768px) {
@@ -118,12 +131,12 @@
             align-items: center;
             gap: 12px;
             padding: 12px 16px;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             cursor: pointer;
             color: var(--text-primary);
             font-weight: 500;
-            transition: 0.2s;
-            margin-bottom: 4px;
+            transition: all 0.2s ease;
+            margin-bottom: 6px;
         }
 
         .menu-item:hover {
@@ -134,6 +147,7 @@
         .menu-item.active {
             background: var(--accent);
             color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
         /* Main Content */
@@ -285,19 +299,25 @@
 
         .message-content {
             flex: 1;
-            background: var(--message-ai-bg);
-            padding: 1.25rem;
-            border-radius: 16px;
+            background: var(--bubble-ai);
+            color: var(--bubble-ai-text);
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border-bottom-left-radius: 4px;
             box-shadow: var(--shadow-sm);
-            border: var(--glass-border);
-            line-height: 1.6;
+            border: 1px solid var(--border);
+            line-height: 1.7;
+            font-size: 1rem;
         }
 
         .message.user .message-content {
-            background: var(--message-user-bg);
-            color: var(--message-user-text);
+            background: var(--bubble-user);
+            color: var(--bubble-user-text);
             border: none;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+            border-radius: var(--radius-lg);
+            border-bottom-right-radius: 4px;
+            box-shadow: var(--shadow-md);
+            background-image: var(--accent-gradient);
         }
 
         .message-name {
@@ -355,24 +375,7 @@
         }
 
         /* Sidebar Styling */
-        .sidebar {
-            width: 280px;
-            background: var(--sidebar-bg);
-            backdrop-filter: var(--blur);
-            -webkit-backdrop-filter: var(--blur);
-            border-right: var(--glass-border);
-            display: flex;
-            flex-direction: column;
-            padding: 1.5rem 1rem 2rem 1rem;
-            /* Increased bottom padding */
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 100;
-            box-shadow: var(--shadow-lg);
-            height: 100vh;
-            height: 100dvh;
-            /* Use dynamic viewport height for mobile browsers */
-            overflow: hidden;
-        }
+        /* Duplicate sidebar rule removed */
 
         /* Scrollable Middle Section */
         .sidebar-scroll-area {
@@ -390,7 +393,7 @@
             flex-shrink: 0;
             border-top: 1px solid var(--border);
             padding-top: 1rem;
-            background: var(--sidebar-bg);
+            background: var(--bg-sidebar);
             padding-bottom: env(safe-area-inset-bottom);
             /* Handle iPhone home bar */
             /* Ensure background covers content behind */
@@ -399,7 +402,7 @@
         /* Input Area Alignment */
         .input-container {
             padding: 1.5rem 2rem;
-            background: var(--sidebar-bg);
+            background: var(--bg-sidebar);
             backdrop-filter: var(--blur);
             -webkit-backdrop-filter: var(--blur);
             border-top: var(--glass-border);
@@ -411,15 +414,14 @@
         .input-box {
             width: 100%;
             max-width: 850px;
-            /* Match message width */
             margin: 0;
-            /* Reset margin since flex handles centering */
             position: relative;
-            background: var(--bg-color);
-            border-radius: 16px;
+            background: var(--input-bg);
+            border-radius: var(--radius-xl);
             border: 1px solid var(--border);
-            box-shadow: var(--shadow-md);
-            transition: all 0.2s;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            padding: 8px;
         }
 
         .input-box:focus-within {
@@ -454,17 +456,18 @@
         }
 
         .send-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             border: none;
-            background: var(--accent);
+            background: var(--accent-gradient);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
         }
 
         .send-btn:hover {
@@ -493,7 +496,7 @@
 
         .modal {
             background: var(--bg-body);
-            border-radius: 16px;
+            border-radius: var(--radius-xl);
             padding: 24px;
             width: 400px;
             max-width: 90%;
@@ -519,12 +522,19 @@
 
         .setting-input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             background: var(--input-bg);
             color: var(--text-primary);
             box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .save-btn {
@@ -589,15 +599,15 @@
         }
 
         .settings-tab {
-            padding: 10px 12px;
-            border-radius: 8px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
             cursor: pointer;
             color: var(--text-primary);
             font-weight: 500;
-            transition: 0.2s;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .settings-tab:hover {
@@ -1515,7 +1525,7 @@
                 <path d="M10 15.5a2.5 2.5 0 0 0 4 0"></path>
             </svg>
             <span
-                style="background: linear-gradient(45deg, #2563eb, #1d4ed8); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: -0.5px; margin-left: 10px; font-size: 20px;">Zenith
+                style="background: var(--accent-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: -0.5px; margin-left: 10px; font-size: 20px;">Zenith
                 AI</span>
         </div>
 
