@@ -3303,6 +3303,33 @@
             }
         }
 
+        function saveCurrentChat() {
+            if (!currentChatId) return;
+
+            // Find chat object
+            let chat = allChats.find(c => c.id === currentChatId);
+            if (!chat) {
+                chat = { id: currentChatId, title: 'New Chat', messages: [], timestamp: Date.now() };
+                allChats.unshift(chat);
+            }
+
+            // Update messages
+            chat.messages = conversationHistory;
+
+            // Generate title if needed
+            if (chat.title === 'New Chat' && conversationHistory.length > 0) {
+                const firstUserMsg = conversationHistory.find(m => m.role === 'user');
+                if (firstUserMsg) {
+                    let text = Array.isArray(firstUserMsg.content) ? firstUserMsg.content[0].text : firstUserMsg.content;
+                    chat.title = text.substring(0, 30) + (text.length > 30 ? '...' : '');
+                }
+            }
+
+            chat.timestamp = Date.now();
+            StorageService.saveChat(chat); // Save via Service
+            renderChatHistory();
+        }
+
         function renderChatHistory() {
             const list = document.getElementById('chatHistoryList');
             list.innerHTML = '';
