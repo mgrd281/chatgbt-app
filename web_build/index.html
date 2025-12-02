@@ -2112,42 +2112,51 @@
             renderChatHistory();
         });
 
-        let selectedTemplate = 'modern';
+        let selectedTemplate = 'warm';
 
-        function selectTemplate(el, style) {
+        function selectTemplate(el, template) {
             document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
-            selectedTemplate = style;
+            selectedTemplate = template;
         }
 
         function openPresentationModal() {
             document.getElementById('pptSetupModal').style.display = 'flex';
+            // Reset topic
+            document.getElementById('pptTopic').value = '';
         }
 
         async function generatePresentation() {
             const topic = document.getElementById('pptTopic').value;
             const style = selectedTemplate;
 
-            if (!topic) return;
+            if (!topic) {
+                alert("Bitte geben Sie ein Thema ein. / Please enter a topic.");
+                return;
+            }
+
+            if (!apiKey) {
+                alert("Bitte geben Sie Ihren API-Schlüssel in den Einstellungen ein. / Please enter your API Key in Settings.");
+                return;
+            }
 
             document.getElementById('pptSetupModal').style.display = 'none';
 
-            // Show loading with progress bar
+            // Show loading in chat
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'message';
             loadingDiv.innerHTML = `
                 <div class="avatar ai">AI</div>
                 <div class="message-content">
-                    <div class="message-name">Zen Chat</div>
+                    <div class="message-name">Zen AI Presentation</div>
                     <div class="message-text">
-                        <div>Generating professional presentation about "${topic}"...</div>
-                        <div class="progress-container">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="pptProgress"></div>
-                            </div>
-                            <div class="progress-text">
-                                <span id="pptStatus">Analyzing topic...</span>
+                        <div style="width: 100%; max-width: 300px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;">
+                                <span id="pptStatus">Generating content...</span>
                                 <span id="pptTime">0%</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;">
+                                <div id="pptProgress" style="width: 0%; height: 100%; background: var(--accent); transition: width 0.3s;"></div>
                             </div>
                         </div>
                     </div>
@@ -2224,6 +2233,10 @@
                 });
 
                 const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
 
                 // Complete progress
                 clearInterval(interval);
