@@ -1,10 +1,15 @@
+import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import pool from "./db";
 
 export const authOptions = {
     providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        }),
         CredentialsProvider({
-            name: "Email Login",
+            name: "Admin Login",
             credentials: {
                 email: { label: "Email", type: "email", placeholder: "admin@example.com" },
                 password: { label: "Password", type: "password" }
@@ -16,8 +21,6 @@ export const authOptions = {
                     const user = res.rows[0];
 
                     if (user && user.password === password) {
-                        // For this demo, we allow login if email exists.
-                        // Ensure you have an admin user in DB: UPDATE users SET role='admin' WHERE email='...';
                         return { id: user.id.toString(), email: user.email, role: user.role };
                     }
                     return null;
@@ -29,9 +32,39 @@ export const authOptions = {
         })
     ],
     callbacks: {
+        async signIn({ user, account, profile }) {
+            if (account.provider === 'google') {
+                const { email } = user;
+                try {
+                    const res = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+                    if (res.rows.length === 0) {
+                        await pool.query(
+                            "INSERT INTO users (email, role, created_at, last_active, subscription_plan, subscription_status) VALUES ($1, 'user', $2, $2, 'free', 'active')",
+                            [email, Date.now()]
+                        );
+                    } else {
+                        // Update last active
+                        await pool.query("UPDATE users SET last_active = $1 WHERE email = $2", [Date.now(), email]);
+                    }
+                    return true;
+                } catch (e) {
+                    console.error("Error saving google user", e);
+                    return false;
+                }
+            }
+            return true;
+        },
         async jwt({ token, user }) {
             if (user) {
-                token.role = user.role;
+                // If user just signed in, fetch role from DB to be sure (for Google users)
+                if (!token.role) {
+                    try {
+                        const res = await pool.query("SELECT role FROM users WHERE email = $1", [user.email]);
+                        if (res.rows[0]) token.role = res.rows[0].role;
+                    } catch (e) { }
+                } else {
+                    token.role = user.role;
+                }
             }
             return token;
         },
