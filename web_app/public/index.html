@@ -1971,12 +1971,16 @@
             </div>
 
             <div class="ppt-filter-bar" id="pptFilterBar">
-                <div class="ppt-filter-chip active" onclick="filterThemes('all', this)">ALL</div>
-                <div class="ppt-filter-chip" onclick="filterThemes('business', this)">Business</div>
-                <div class="ppt-filter-chip" onclick="filterThemes('education', this)">Education</div>
-                <div class="ppt-filter-chip" onclick="filterThemes('creative', this)">Creative</div>
-                <div class="ppt-filter-chip" onclick="filterThemes('minimal', this)">Minimal</div>
-                <div class="ppt-filter-chip" onclick="filterThemes('dark', this)">Dark Mode</div>
+                <div class="ppt-filter-chip active" data-category="all" onclick="filterThemes('all', this)">ALL</div>
+                <div class="ppt-filter-chip" data-category="business" onclick="filterThemes('business', this)">Business
+                </div>
+                <div class="ppt-filter-chip" data-category="education" onclick="filterThemes('education', this)">
+                    Education</div>
+                <div class="ppt-filter-chip" data-category="creative" onclick="filterThemes('creative', this)">Creative
+                </div>
+                <div class="ppt-filter-chip" data-category="minimal" onclick="filterThemes('minimal', this)">Minimal
+                </div>
+                <div class="ppt-filter-chip" data-category="dark" onclick="filterThemes('dark', this)">Dark Mode</div>
             </div>
 
             <div class="ppt-themes-grid" id="pptThemesGrid">
@@ -2658,9 +2662,13 @@
 
             .ppt-themes-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 15px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 20px;
                 flex: 1;
+                width: 100%;
+                align-content: start;
+                padding-bottom: 80px;
+                /* Space for FAB */
             }
 
             .ppt-theme-card {
@@ -4167,7 +4175,8 @@ Instructions:
 
             function selectTheme(id) {
                 selectedThemeId = id;
-                renderThemes(document.querySelector('.ppt-filter-chip.active').innerText.toLowerCase() === 'all' ? 'all' : document.querySelector('.ppt-filter-chip.active').innerText.toLowerCase());
+                const activeCategory = document.querySelector('.ppt-filter-chip.active').dataset.category;
+                renderThemes(activeCategory);
 
                 // Show Generate Button
                 const fab = document.getElementById('pptGenerateFab');
