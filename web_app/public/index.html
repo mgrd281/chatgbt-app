@@ -450,6 +450,30 @@
             margin: 0 auto;
         }
 
+        /* Input Area Container & Empty State */
+        .input-area-container {
+            width: 100%;
+            padding: 20px;
+            background: transparent;
+            margin-top: auto;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+        }
+
+        .main-content.empty-state {
+            justify-content: center;
+        }
+
+        .main-content.empty-state .input-area-container {
+            margin-top: 0;
+            flex: 0 0 auto;
+            transform: translateY(-15vh);
+        }
+
+        .main-content.empty-state .chat-container {
+            display: none;
+        }
+
         .input-box {
             width: 100%;
             max-width: 850px;
@@ -466,6 +490,10 @@
         .input-box:focus-within {
             border-color: var(--accent);
             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+
+        .main-content.empty-state .center-greeting {
+            display: flex !important;
         }
 
         textarea {
@@ -1683,6 +1711,15 @@
         </div>
 
         <!-- Input Area -->
+
+        <!-- Center Greeting (Visible only in empty state) -->
+        <div class="center-greeting"
+            style="display: none; flex-direction: column; align-items: center; justify-content: center; position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center; pointer-events: none;">
+            <div style="font-size: 32px; font-weight: 600; margin-bottom: 10px; font-family: 'Outfit', sans-serif;">
+                Velai</div>
+            <div style="font-size: 18px; color: var(--text-secondary);">Was möchtest du wissen?</div>
+        </div>
+
         <div class="input-area-container">
             <div class="input-area-wrapper">
                 <div class="input-box" style="background: transparent; border: none; box-shadow: none; padding: 0;">
@@ -3511,8 +3548,10 @@
                 await StorageService.init();
                 renderChatHistory();
                 renderPresentationHistory();
+                newChat();
             });
 
+            // --- Chat Functions ---
             // --- Chat Functions ---
             function newChat() {
                 if (currentChatId) {
@@ -3522,9 +3561,16 @@
                 conversationHistory = [];
                 chatContent.innerHTML = '';
 
-                // Add Greeting
-                const greeting = document.getElementById('greeting').innerText;
-                addMessage('ai', greeting, null, false);
+                // Set Empty State
+                document.querySelector('.main-content').classList.add('empty-state');
+
+                // Greeting (Added but hidden by empty-state CSS until first message)
+                // Or we can choose NOT to add it until user types. 
+                // Let's add it to history but not UI yet, or just add it and let it be hidden.
+                // Actually, if we hide chat-container, the greeting is hidden. 
+                // When user sends message, we remove empty-state, and greeting + user message appear.
+                const t = translations[currentLanguage];
+                addMessage('ai', t.greeting, null, false);
 
                 // Add to history list immediately
                 const newChatObj = { id: currentChatId, title: 'New Chat', messages: [], timestamp: Date.now() };
@@ -4457,7 +4503,19 @@
 
             async function sendMessage() {
                 const text = input.value.trim();
-                if (!text && !currentImageBase64) return;
+                const image = currentImageBase64;
+
+                if (!text && !image) return;
+
+                // Remove Empty State on first message
+                document.querySelector('.main-content').classList.remove('empty-state');
+
+                // Clear input
+                input.value = '';
+                input.style.height = 'auto';
+                currentImageBase64 = null;
+                imagePreviewContainer.style.display = 'none';
+                imageInput.value = '';
 
                 // PIN Check
                 if (!isPinVerified && messageCount >= 1) {
@@ -4471,8 +4529,8 @@
                 }
 
                 // Display User Message
-                if (currentImageBase64) {
-                    addMessage('user', text, currentImageBase64);
+                if (image) {
+                    addMessage('user', text, image);
                 } else {
                     addMessage('user', text);
                 }
