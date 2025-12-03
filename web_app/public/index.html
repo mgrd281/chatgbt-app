@@ -2129,6 +2129,17 @@
                                     <option value="Analysis">تحليل (Analysis)</option>
                                 </select>
                             </div>
+                            <div class="setting-group">
+                                <label class="setting-label">لغة البرومبت (Prompt Language)</label>
+                                <select class="setting-input" id="promptLanguage">
+                                    <option value="Auto">نفس لغة الفكرة (Auto)</option>
+                                    <option value="English">English</option>
+                                    <option value="German">Deutsch</option>
+                                    <option value="Arabic">العربية</option>
+                                    <option value="French">Français</option>
+                                    <option value="Spanish">Español</option>
+                                </select>
+                            </div>
 
                             <button class="save-btn" onclick="generateContent('social')">تحويل إلى Prompt
                                 احترافي</button>
@@ -3749,12 +3760,34 @@
                 let loadingText = "Generating...";
 
                 if (type === 'social') {
-                    const platform = document.getElementById('socialPlatform').value;
-                    const topic = document.getElementById('socialTopic').value;
-                    const tone = document.getElementById('socialTone').value;
+                    const platform = document.getElementById('socialPlatform').value; // Goal
+                    const topic = document.getElementById('socialTopic').value; // Idea
+                    const language = document.getElementById('promptLanguage').value; // Language
+
                     if (!topic) return alert("Please enter a topic.");
 
-                    prompt = `Write a ${tone} social media post for ${platform} about: "${topic}". Include emojis and hashtags.`;
+                    // Constructing the Meta-Prompt
+                    let langInstruction = "";
+                    if (language !== "Auto") {
+                        langInstruction = `The Output Prompt MUST be in ${language} language.`;
+                    } else {
+                        langInstruction = "The Output Prompt MUST be in the same language as the user's idea.";
+                    }
+
+                    prompt = `
+You are an expert Senior Prompt Engineer. Your goal is to craft a highly effective, professional, and precise prompt based on the user's raw idea.
+
+User's Idea: "${topic}"
+Intended Goal/Domain: ${platform}
+Target Language: ${language}
+
+Instructions:
+1. Analyze the user's idea and intent.
+2. Create a structured, high-quality prompt that the user can copy and paste into an AI model (like ChatGPT, Claude, etc.) to get the best results.
+3. Use advanced prompt engineering techniques (Persona, Context, Constraints, Format, Examples) where applicable.
+4. ${langInstruction}
+5. Output ONLY the crafted prompt, no conversational filler.
+`;
                     outputId = 'socialOutput';
                     resultId = 'socialResult';
                 }
