@@ -1384,6 +1384,170 @@
             color: var(--accent);
         }
 
+        /* --- Presentation Creator Full Page Styles --- */
+        .presentation-creator-area {
+            display: none;
+            /* Hidden by default */
+            flex-direction: column;
+            height: 100%;
+            padding: 20px;
+            overflow-y: auto;
+            background: var(--bg-body);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 50;
+            /* Above chat */
+        }
+
+        .ppt-creator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .ppt-topic-input-container {
+            margin-bottom: 30px;
+        }
+
+        .ppt-topic-textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 16px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .ppt-topic-textarea:focus {
+            border-color: var(--accent);
+        }
+
+        /* Filter Bar */
+        .ppt-filter-bar {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .ppt-filter-bar::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        .ppt-filter-chip {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .ppt-filter-chip.active,
+        .ppt-filter-chip:hover {
+            background: var(--text-primary);
+            color: var(--bg-body);
+            border-color: var(--text-primary);
+        }
+
+        /* Themes Grid */
+        .ppt-themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding-bottom: 40px;
+        }
+
+        .ppt-theme-card {
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .ppt-theme-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .ppt-theme-card.selected {
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .ppt-theme-thumbnail {
+            height: 160px;
+            width: 100%;
+            background: #eee;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .ppt-theme-info {
+            padding: 15px;
+        }
+
+        .ppt-theme-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .ppt-theme-category {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Floating Action Button for Generate */
+        .ppt-generate-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #000;
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            border: none;
+            display: none;
+            /* Hidden until theme selected */
+            align-items: center;
+            gap: 10px;
+            z-index: 60;
+            transition: transform 0.2s;
+        }
+
+        .ppt-generate-fab:hover {
+            transform: scale(1.05);
+        }
+
         /* New Presentation Themes */
         /* Neon */
         .theme-neon {
@@ -1736,240 +1900,92 @@
                     <!-- Grok Style Input Container v4 (Button Inside, Black) -->
                     <div class="input-box-wrapper">
                         <div class="input-box"
-                            style="display: flex; align-items: center; padding: 8px 12px 8px 16px; border-radius: 9999px; border: 1px solid #e5e7eb; background: #f9fafb; box-shadow: 0 1px 2px rgba(0,0,0,0.02); min-height: 56px;">
+                            style="display: flex; align-items: center; padding: 6px 12px; gap: 10px; border: 1px solid #e5e7eb; border-radius: 9999px; background: #f9fafb;">
 
-                            <!-- Left: Attachment (Paperclip) -->
-                            <button class="icon-btn" onclick="document.getElementById('imageInput').click()"
-                                style="width: 24px; height: 24px; background: transparent; color: #6b7280; border: none; cursor: pointer; margin-right: 12px; display: flex; align-items: center; justify-content: center;">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path
-                                        d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48">
-                                    </path>
+                            <!-- Plus Button -->
+                            <button class="action-btn" onclick="document.getElementById('imageInput').click()"
+                                style="width: 32px; height: 32px; border-radius: 50%; background: #f3f4f6; color: #6b7280; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; flex-shrink: 0;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M12 5v14M5 12h14"></path>
                                 </svg>
                             </button>
-                            <input type="file" id="imageInput" accept="image/*" style="display: none;"
-                                onchange="handleImageSelect(this)">
 
-                            <!-- Center: Input -->
-                            <textarea id="input" rows="1" placeholder="Was möchtest du wissen?"
-                                style="flex: 1; border: none; background: transparent; outline: none; resize: none; padding: 0; font-size: 16px; color: #111827; font-family: inherit; line-height: 24px; height: 24px;"></textarea>
+                            <!-- Text Input -->
+                            <textarea id="chatInput" placeholder="Was möchtest du wissen?"
+                                style="flex: 1; background: transparent; border: none; outline: none; resize: none; height: 24px; max-height: 100px; padding: 2px 0; font-size: 15px; color: #111827; line-height: 24px;"
+                                oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'; if(this.value === '') this.style.height='24px';"
+                                onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"></textarea>
 
-                            <!-- Right: Send Button (Black Circle) -->
-                            <div style="margin-left: 8px;">
-                                <button class="send-btn" onclick="sendMessage()"
-                                    style="width: 36px; height: 36px; border-radius: 50%; background: #000000; color: #ffffff; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="12" y1="19" x2="12" y2="5"></line>
-                                        <polyline points="5 12 12 5 19 12"></polyline>
-                                    </svg>
-                                </button>
-                            </div>
+                            <!-- Send Button (Black Circle) -->
+                            <button class="send-btn" onclick="sendMessage()"
+                                style="width: 32px; height: 32px; border-radius: 50%; background: #000000; color: white; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; flex-shrink: 0; transition: transform 0.1s;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="19" x2="12" y2="5"></line>
+                                    <polyline points="5 12 12 5 19 12"></polyline>
+                                </svg>
+                            </button>
 
                         </div>
                     </div>
-
+                    <div style="display: flex; justify-content: center; margin-top: 8px; gap: 15px;">
+                        <button class="action-btn" onclick="openPresentationSetup()"
+                            style="background: none; border: none; color: var(--text-secondary); font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="3" y1="9" x2="21" y2="9"></line>
+                                <line x1="9" y1="21" x2="9" y2="9"></line>
+                            </svg>
+                            Presentation
+                        </button>
+                        <button class="action-btn" onclick="openContentCreator()"
+                            style="background: none; border: none; color: var(--text-secondary); font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path>
+                                <line x1="16" y1="8" x2="2" y2="22"></line>
+                                <line x1="17.5" y1="15" x2="9" y2="15"></line>
+                            </svg>
+                            Prompts
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- New Comprehensive Settings Modal -->
-        <div class="modal-overlay" id="settingsModal">
-            <div class="modal">
-                <div class="settings-container" style="position: relative;">
-                    <button onclick="document.getElementById('settingsModal').style.display='none'"
-                        style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-secondary); z-index: 10;">&times;</button>
-                    <!-- Sidebar -->
-                    <div class="settings-sidebar">
-                        <div class="settings-tab active" onclick="switchTab('general')" id="tabGeneral">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <path
-                                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
-                                </path>
-                            </svg>
-                            Allgemein
-                        </div>
-                        <div class="settings-tab" onclick="switchTab('account')" id="tabAccount">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                            Konto
-                        </div>
-                        <div class="settings-tab" onclick="switchTab('data')" id="tabData">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                            Datenschutz
-                        </div>
-                    </div>
-
-                    <!-- Content -->
-                    <div class="settings-content">
-                        <!-- General Section -->
-                        <div class="settings-section active" id="section-general">
-                            <h3 id="generalTitle">Allgemeine Einstellungen</h3>
-
-                            <div class="setting-group">
-                                <label class="setting-label" id="langLabel">Sprache / Language / اللغة</label>
-                                <select class="setting-input" id="languageSelect">
-                                    <option value="de">Deutsch</option>
-                                    <option value="en">English</option>
-                                    <option value="ar">العربية</option>
-                                    <option value="uk">Українська</option>
-                                </select>
-                            </div>
-
-                            <div class="setting-group">
-                                <label class="setting-label" id="apiKeyLabel">API Key</label>
-                                <input type="password" class="setting-input" id="apiKeyInput" placeholder="sk-...">
-                            </div>
-
-                            <div class="setting-group">
-                                <label class="setting-label" id="sysPromptLabel">System Prompt</label>
-                                <textarea class="setting-input" id="systemPrompt" rows="3"
-                                    placeholder="Du bist ein hilfreicher Assistent..."></textarea>
-                            </div>
-
-                            <div class="toggle-row">
-                                <span class="toggle-label" id="audioModeLabel">Audio-Modus</span>
-                                <label class="switch">
-                                    <input type="checkbox" id="audioModeToggle">
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-
-                            <div class="toggle-row">
-                                <span class="toggle-label" id="autocompleteLabel">Automatisch vervollständigen</span>
-                                <label class="switch">
-                                    <input type="checkbox" id="autocompleteToggle" checked>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Account Section -->
-                        <div class="settings-section" id="section-account">
-                            <h3 id="accountTitle">Benutzerkonto</h3>
-
-                            <div class="setting-group">
-                                <label class="setting-label" id="emailLabel">E-Mail</label>
-                                <input type="email" class="setting-input" id="emailInput"
-                                    placeholder="name@example.com">
-                            </div>
-
-                            <div class="setting-group">
-                                <label class="setting-label" id="phoneLabel">Telefonnummer</label>
-                                <input type="tel" class="setting-input" id="phoneInput" placeholder="+49 123 456789">
-                            </div>
-
-                            <div class="setting-group">
-                                <label class="setting-label" id="subLabel">Abonnement</label>
-                                <div style="display: flex; flex-direction: column; gap: 15px;">
-                                    <!-- Trial Plan -->
-                                    <div
-                                        style="padding: 15px; border: 2px solid #6366f1; border-radius: 12px; background: rgba(99, 102, 241, 0.05); display: flex; justify-content: space-between; align-items: center;">
-                                        <div>
-                                            <div style="font-weight: 700; color: #6366f1; font-size: 16px;">3-Day Free
-                                                Trial
-                                            </div>
-                                            <div style="font-size: 13px; color: var(--text-secondary);">Full access to
-                                                all
-                                                features for 3 days. No credit card required.</div>
-                                        </div>
-                                        <button onclick="selectPlan('trial')"
-                                            style="background: #6366f1; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;">Start
-                                            Trial</button>
-                                    </div>
-
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                                        <!-- Plan 1 -->
-                                        <div
-                                            style="padding: 15px 10px; border: 1px solid var(--border); border-radius: 8px; text-align: center; background: var(--input-bg);">
-                                            <div style="font-weight: 600; margin-bottom: 10px; font-size: 14px;"
-                                                id="plan1Title">Basic</div>
-                                            <div
-                                                style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
-                                                Free</div>
-                                            <button id="plan1Btn" onclick="selectPlan('basic')"
-                                                style="background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%;">Abonnieren</button>
-                                        </div>
-                                        <!-- Plan 2 -->
-                                        <div
-                                            style="padding: 15px 10px; border: 1px solid var(--accent); border-radius: 8px; text-align: center; background: var(--input-bg); position: relative;">
-                                            <div
-                                                style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; font-size: 10px; padding: 2px 8px; border-radius: 10px;">
-                                                Popular</div>
-                                            <div style="font-weight: 600; margin-bottom: 10px; font-size: 14px;"
-                                                id="plan2Title">Pro</div>
-                                            <div
-                                                style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
-                                                $9.99/mo</div>
-                                            <button id="plan2Btn" onclick="selectPlan('pro')"
-                                                style="background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%;">Abonnieren</button>
-                                        </div>
-                                        <!-- Plan 3 -->
-                                        <div
-                                            style="padding: 15px 10px; border: 1px solid var(--border); border-radius: 8px; text-align: center; background: var(--input-bg);">
-                                            <div style="font-weight: 600; margin-bottom: 10px; font-size: 14px;"
-                                                id="plan3Title">Ultra</div>
-                                            <div
-                                                style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
-                                                $19.99/mo</div>
-                                            <button id="plan3Btn" onclick="selectPlan('ultra')"
-                                                style="background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%;">Abonnieren</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Data Section -->
-                        <div class="settings-section" id="section-data">
-                            <h3 id="dataTitle">Sicherheit & Daten</h3>
-
-                            <div class="toggle-row">
-                                <span class="toggle-label" id="historyLabel">Chat-Verlauf speichern</span>
-                                <label class="switch">
-                                    <input type="checkbox" id="historyToggle" checked>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-
-                            <div style="margin-top: 20px;">
-                                <button class="setting-input"
-                                    style="text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                                    <span id="archivedChatsLabel">Archivierte Chats</span>
-                                    <span>&rsaquo;</span>
-                                </button>
-                            </div>
-
-                            <div style="margin-top: 10px;">
-                                <button class="setting-input"
-                                    style="text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: red; border-color: red;">
-                                    <span id="clearDataLabel">Alle Daten löschen</span>
-                                </button>
-                            </div>
-
-                            <div style="margin-top: 20px; font-size: 12px; color: var(--text-secondary);">
-                                <a href="#" style="color: var(--accent); text-decoration: none;">Privacy Policy</a>
-                                &bull;
-                                <a href="#" style="color: var(--accent); text-decoration: none;">Terms of Service</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div style="padding: 20px; border-top: 1px solid var(--border); text-align: right;">
-                    <button class="save-btn" style="width: auto; margin: 0;" id="saveBtn"
-                        onclick="saveSettings()">Speichern
-                        & Schließen</button>
-                </div>
+        <!-- NEW Presentation Creator Area -->
+        <div id="presentationCreatorArea" class="presentation-creator-area">
+            <div class="ppt-creator-header">
+                <h2 style="margin:0; font-family: 'Outfit', sans-serif;">Create Presentation</h2>
+                <button onclick="closePresentationSetup()"
+                    style="background:none; border:none; font-size:24px; cursor:pointer; color:var(--text-primary);">&times;</button>
             </div>
+
+            <div class="ppt-topic-input-container">
+                <label style="display:block; margin-bottom:10px; font-weight:600;">What is your presentation
+                    about?</label>
+                <textarea id="pptFullTopic" class="ppt-topic-textarea" rows="3"
+                    placeholder="Enter your topic here... (e.g. The Future of AI in Healthcare)"></textarea>
+            </div>
+
+            <div class="ppt-filter-bar" id="pptFilterBar">
+                <div class="ppt-filter-chip active" onclick="filterThemes('all', this)">ALL</div>
+                <div class="ppt-filter-chip" onclick="filterThemes('business', this)">Business</div>
+                <div class="ppt-filter-chip" onclick="filterThemes('education', this)">Education</div>
+                <div class="ppt-filter-chip" onclick="filterThemes('creative', this)">Creative</div>
+                <div class="ppt-filter-chip" onclick="filterThemes('minimal', this)">Minimal</div>
+                <div class="ppt-filter-chip" onclick="filterThemes('dark', this)">Dark Mode</div>
+            </div>
+
+            <div class="ppt-themes-grid" id="pptThemesGrid">
+                <!-- Themes rendered here -->
+            </div>
+
+            <button id="pptGenerateFab" class="ppt-generate-fab" onclick="generatePresentationFromFull()">
+                <span>✨ Generate Presentation</span>
+            </button>
         </div>
 
         <!-- PIN Modal -->
@@ -1989,96 +2005,6 @@
         </div>
 
         <!-- Presentation Setup Modal -->
-        <div class="modal-overlay" id="pptSetupModal">
-            <div class="modal" style="width: 500px; max-width: 95vw; padding: 20px; position: relative;">
-                <button onclick="document.getElementById('pptSetupModal').style.display='none'"
-                    style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-secondary);">&times;</button>
-                <h2 id="pptTitle" style="margin-bottom: 20px;">Präsentation erstellen</h2>
-
-                <div class="setting-group">
-                    <label class="setting-label" id="pptTopicLabel">Thema / Inhalt</label>
-                    <textarea class="setting-input" id="pptTopic" rows="6"
-                        placeholder="Thema eingeben oder Text hier einfügen..."></textarea>
-                </div>
-
-                <div class="setting-group">
-                    <label class="setting-label" id="pptStyleLabel">Design wählen</label>
-                    <div class="template-grid">
-                        <!-- Modern -->
-                        <div class="template-card selected" onclick="selectTemplate(this, 'modern')">
-                            <div class="template-preview"
-                                style="background: linear-gradient(135deg, #0f2027, #2c5364); color: #00d2ff;">Abc</div>
-                            <div class="template-name">Modern</div>
-                        </div>
-                        <!-- Pro -->
-                        <div class="template-card" onclick="selectTemplate(this, 'pro')">
-                            <div class="template-preview"
-                                style="background: #fdfbf7; color: #2c3e50; border-bottom: 3px solid #e74c3c;">Abc</div>
-                            <div class="template-name">Professional</div>
-                        </div>
-                        <!-- Creative -->
-                        <div class="template-card" onclick="selectTemplate(this, 'creative')">
-                            <div class="template-preview"
-                                style="background: linear-gradient(to right, #4A00E0, #8E2DE2); color: white;">Abc</div>
-                            <div class="template-name">Creative</div>
-                        </div>
-                        <!-- Minimal -->
-                        <div class="template-card" onclick="selectTemplate(this, 'minimal')">
-                            <div class="template-preview"
-                                style="background: #fff; color: #000; font-family: sans-serif; font-weight: 900;">Abc
-                            </div>
-                            <div class="template-name">Minimal</div>
-                        </div>
-                        <!-- Cyber -->
-                        <div class="template-card" onclick="selectTemplate(this, 'cyber')">
-                            <div class="template-preview"
-                                style="background: #000; color: #00ff00; border: 1px solid #00ff00;">Abc</div>
-                            <div class="template-name">Cyber</div>
-                        </div>
-                        <!-- Nature -->
-                        <div class="template-card" onclick="selectTemplate(this, 'nature')">
-                            <div class="template-preview" style="background: #e8f5e9; color: #1b5e20;">Abc</div>
-                            <div class="template-name">Nature</div>
-                        </div>
-                        <!-- Warm (New) -->
-                        <div class="template-card" onclick="selectTemplate(this, 'warm')">
-                            <div class="template-preview"
-                                style="background: #FFF5E6; color: #8E44AD; font-family: serif;">
-                                Abc</div>
-                            <div class="template-name">Warm</div>
-                        </div>
-                        <div class="template-card" onclick="selectTemplate(this, 'neon')">
-                            <div class="template-preview"
-                                style="background: #000; border: 1px solid #0ff; color: #0ff;">Abc
-                            </div>
-                            <div class="template-name">Neon</div>
-                        </div>
-                        <div class="template-card" onclick="selectTemplate(this, 'corporate')">
-                            <div class="template-preview"
-                                style="background: #f0f2f5; color: #333; font-family: 'Segoe UI', sans-serif;">Abc</div>
-                            <div class="template-name">Corp</div>
-                        </div>
-                        <div class="template-card" onclick="selectTemplate(this, 'minimal')">
-                            <div class="template-preview"
-                                style="background: #fff; border: 1px solid #ccc; color: #333; font-family: sans-serif; font-weight: 900;">
-                                Abc</div>
-                            <div class="template-name">Minimal</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                    <button class="save-btn"
-                        style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); width: auto;"
-                        onclick="document.getElementById('pptSetupModal').style.display='none'">Abbrechen</button>
-                    <button class="save-btn" id="pptGenBtn" onclick="generatePresentation()"
-                        style="width: auto; display: flex; align-items: center; padding-left: 20px; padding-right: 20px;">
-                        <div class="play-icon"></div>
-                        <span id="pptGenText">Erstellen</span>
-                    </button>
-                </div>
-            </div>
-        </div>
 
         <!-- Content Creator Modal -->
         <div class="modal-overlay" id="contentCreatorModal">
@@ -2563,6 +2489,151 @@
                 color: white;
                 border: none;
             }
+
+            /* Presentation Creator Styles */
+            .presentation-creator-area {
+                display: none;
+                /* Hidden by default */
+                flex-direction: column;
+                flex: 1;
+                padding: 20px;
+                background: var(--bg-color);
+                overflow-y: auto;
+            }
+
+            .ppt-creator-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .ppt-topic-input-container {
+                margin-bottom: 20px;
+            }
+
+            .ppt-topic-textarea {
+                width: 100%;
+                padding: 12px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                background: var(--input-bg);
+                color: var(--text-primary);
+                font-size: 16px;
+                resize: vertical;
+                min-height: 80px;
+            }
+
+            .ppt-filter-bar {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+                overflow-x: auto;
+                padding-bottom: 5px;
+            }
+
+            .ppt-filter-chip {
+                padding: 8px 15px;
+                border-radius: 20px;
+                background: var(--input-bg);
+                color: var(--text-secondary);
+                cursor: pointer;
+                font-size: 13px;
+                white-space: nowrap;
+                transition: background 0.2s, color 0.2s;
+            }
+
+            .ppt-filter-chip:hover {
+                background: var(--border);
+            }
+
+            .ppt-filter-chip.active {
+                background: var(--accent);
+                color: white;
+            }
+
+            .ppt-themes-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+                flex: 1;
+            }
+
+            .ppt-theme-card {
+                background: var(--input-bg);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                overflow: hidden;
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .ppt-theme-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .ppt-theme-card.selected {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 2px var(--accent);
+            }
+
+            .ppt-theme-thumbnail {
+                width: 100%;
+                height: 80px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                font-weight: bold;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .ppt-theme-info {
+                padding: 10px;
+                text-align: center;
+            }
+
+            .ppt-theme-name {
+                font-weight: 600;
+                font-size: 14px;
+                color: var(--text-primary);
+            }
+
+            .ppt-theme-category {
+                font-size: 11px;
+                color: var(--text-secondary);
+                margin-top: 2px;
+            }
+
+            .ppt-generate-fab {
+                position: sticky;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--accent);
+                color: white;
+                border: none;
+                border-radius: 30px;
+                padding: 12px 25px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                transition: background 0.2s, transform 0.2s;
+                display: none;
+                /* Hidden until theme is selected */
+                align-items: center;
+                gap: 8px;
+                z-index: 10;
+            }
+
+            .ppt-generate-fab:hover {
+                background: var(--accent-hover);
+                transform: translateX(-50%) translateY(-2px);
+            }
         </style>
         <!-- Library Modal -->
         <div id="libraryModal" class="modal-overlay">
@@ -2576,7 +2647,7 @@
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2 0 0 1 4 19.5v-15A2.5 2 0 0 1 6.5 2z"></path>
                         </svg>
                         Bibliothek
                     </h2>
@@ -2649,7 +2720,7 @@
 
             const chatContent = document.getElementById('chatContent');
             const chatArea = document.getElementById('chatArea');
-            const input = document.getElementById('input');
+            const chatInput = document.getElementById('chatInput'); // Changed from 'input' to 'chatInput'
             const micBtn = document.getElementById('micBtn');
             const settingsModal = document.getElementById('settingsModal');
             const pinModal = document.getElementById('pinModal');
@@ -2923,18 +2994,18 @@
                 document.getElementById('settingsText').innerText = t.settings;
                 document.getElementById('presentationText').innerText = t.presentation;
 
-                // PPT Modal
-                document.getElementById('pptTitle').innerText = t.pptTitle;
-                document.getElementById('pptTopicLabel').innerText = t.pptTopic;
-                document.getElementById('pptStyleLabel').innerText = t.pptStyle;
-                document.getElementById('pptGenText').innerText = t.pptGen;
+                // PPT Modal (old, now replaced by presentationCreatorArea)
+                // document.getElementById('pptTitle').innerText = t.pptTitle;
+                // document.getElementById('pptTopicLabel').innerText = t.pptTopic;
+                // document.getElementById('pptStyleLabel').innerText = t.pptStyle;
+                // document.getElementById('pptGenText').innerText = t.pptGen;
                 document.getElementById('exportPdfBtn').innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> ${t.exportPdf}`;
 
                 // Main UI
                 document.querySelector('.model-selector').firstChild.nodeValue = t.modelSelector + ' '; // Update GPT-4 text
                 document.getElementById('tokenCount').innerText = `0 ${t.tokenCounter}`; // Update "Tokens" text
-                document.getElementById('disclaimer').innerText = t.disclaimer;
-                document.getElementById('input').placeholder = t.inputPlaceholder;
+                // document.getElementById('disclaimer').innerText = t.disclaimer; // This element is not in the provided code
+                document.getElementById('chatInput').placeholder = t.inputPlaceholder; // Changed from 'input' to 'chatInput'
 
                 // Settings Modal (New)
                 document.getElementById('tabGeneral').childNodes[2].nodeValue = " " + t.tabGeneral;
@@ -2985,7 +3056,7 @@
                 // RTL Handling
                 const sidebar = document.querySelector('.sidebar');
                 const menuItems = document.querySelectorAll('.menu-item');
-                const inputActions = document.querySelector('.input-actions');
+                const inputActions = document.querySelector('.input-actions'); // This element is not in the provided code
                 const settingsSidebar = document.querySelector('.settings-sidebar');
 
                 if (lang === 'ar') {
@@ -2996,7 +3067,7 @@
                     settingsSidebar.style.borderLeft = '1px solid var(--border)';
 
                     menuItems.forEach(item => item.style.flexDirection = 'row');
-                    inputActions.style.flexDirection = 'row';
+                    // inputActions.style.flexDirection = 'row'; // This element is not in the provided code
 
                 } else {
                     document.body.style.direction = 'ltr';
@@ -3007,7 +3078,7 @@
 
                     menuItems.forEach(item => item.style.flexDirection = 'row');
 
-                    inputActions.style.flexDirection = 'row';
+                    // inputActions.style.flexDirection = 'row'; // This element is not in the provided code
                 }
             }
 
@@ -3019,14 +3090,14 @@
             newChat(); // Initialize chat with correct greeting
 
             // Auto-resize textarea
-            input.addEventListener('input', function () {
+            chatInput.addEventListener('input', function () { // Changed from 'input' to 'chatInput'
                 this.style.height = 'auto';
                 this.style.height = Math.min(this.scrollHeight, 200) + 'px';
                 updateTokenCount(this.value);
             });
 
             // Enter key to send
-            input.addEventListener('keydown', function (e) {
+            chatInput.addEventListener('keydown', function (e) { // Changed from 'input' to 'chatInput'
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     sendMessage();
@@ -3047,8 +3118,8 @@
 
                 recognition.onresult = function (event) {
                     const text = event.results[0][0].transcript;
-                    input.value += (input.value ? ' ' : '') + text;
-                    input.dispatchEvent(new Event('input'));
+                    chatInput.value += (chatInput.value ? ' ' : '') + text; // Changed from 'input' to 'chatInput'
+                    chatInput.dispatchEvent(new Event('input')); // Changed from 'input' to 'chatInput'
                 };
 
                 recognition.onend = function () {
@@ -3056,7 +3127,7 @@
                     micBtn.style.color = 'var(--text-primary)';
                 };
             } else {
-                micBtn.style.display = 'none';
+                // micBtn.style.display = 'none'; // This element is not in the provided code
             }
 
             function toggleVoice() {
@@ -3069,7 +3140,7 @@
                 } else {
                     recognition.start();
                     isListening = true;
-                    micBtn.style.color = 'red';
+                    // micBtn.style.color = 'red'; // This element is not in the provided code
                 }
             }
 
@@ -3180,8 +3251,8 @@
                             currentImageBase64 = e.target.result;
                             imagePreview.src = currentImageBase64;
                             imagePreviewContainer.style.display = 'block';
-                            // Optional: Focus input
-                            input.focus();
+                            // Optional: Focus chatInput
+                            chatInput.focus(); // Changed from 'input' to 'chatInput'
                         };
                         reader.readAsDataURL(file);
                     } else if (file.type === 'application/pdf') {
@@ -3327,10 +3398,10 @@
             }
 
             function useLibraryItem(text) {
-                input.value = text;
-                input.style.height = 'auto';
+                chatInput.value = text; // Changed from 'input' to 'chatInput'
+                chatInput.style.height = 'auto'; // Changed from 'input' to 'chatInput'
                 document.getElementById('libraryModal').style.display = 'none';
-                input.focus();
+                chatInput.focus(); // Changed from 'input' to 'chatInput'
             }
 
             function renderLibrary() {
