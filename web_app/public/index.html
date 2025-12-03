@@ -1737,7 +1737,9 @@
         <!-- New Comprehensive Settings Modal -->
         <div class="modal-overlay" id="settingsModal">
             <div class="modal">
-                <div class="settings-container">
+                <div class="settings-container" style="position: relative;">
+                    <button onclick="toggleSettings()"
+                        style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-secondary); z-index: 10;">&times;</button>
                     <!-- Sidebar -->
                     <div class="settings-sidebar">
                         <div class="settings-tab active" onclick="switchTab('general')" id="tabGeneral">
@@ -1924,7 +1926,7 @@
                 </div>
                 <div style="padding: 20px; border-top: 1px solid var(--border); text-align: right;">
                     <button class="save-btn" style="width: auto; margin: 0;" id="saveBtn"
-                        onclick="toggleSettings()">Speichern & Schließen</button>
+                        onclick="saveSettings()">Speichern & Schließen</button>
                 </div>
             </div>
         </div>
@@ -4605,6 +4607,7 @@
                 }
             });
         </script>
+        <script src="settings_logic.js"></script>
 </body>
 
 </html>
