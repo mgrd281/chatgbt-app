@@ -3992,14 +3992,120 @@ Instructions:
                 selectedTemplate = template;
             }
 
-            function openPresentationModal() {
-                document.getElementById('pptSetupModal').style.display = 'flex';
-                // Reset topic
-                document.getElementById('pptTopic').value = '';
+            // --- New Presentation Creator Logic ---
+            const pptThemes = [
+                { id: 'modern', name: 'Modern Blue', category: 'business', color: '#1e3a8a' },
+                { id: 'professional', name: 'Professional', category: 'business', color: '#374151' },
+                { id: 'creative', name: 'Creative Purple', category: 'creative', color: '#7c3aed' },
+                { id: 'minimal', name: 'Minimal White', category: 'minimal', color: '#ffffff', border: true },
+                { id: 'cyber', name: 'Cyberpunk', category: 'dark', color: '#000000', text: '#00ff00' },
+                { id: 'nature', name: 'Nature Green', category: 'creative', color: '#14532d' },
+                { id: 'warm', name: 'Warm Orange', category: 'creative', color: '#c2410c' },
+                { id: 'neon', name: 'Neon Lights', category: 'dark', color: '#171717', text: '#06b6d4' },
+                { id: 'corporate', name: 'Corporate Grey', category: 'business', color: '#4b5563' },
+                { id: 'education', name: 'Academic', category: 'education', color: '#1d4ed8' },
+                { id: 'dark', name: 'Dark Mode', category: 'dark', color: '#000000' },
+                { id: 'pastel', name: 'Pastel Dreams', category: 'creative', color: '#fbcfe8', text: '#831843' }
+            ];
+
+            let selectedThemeId = null;
+
+            function openPresentationSetup() {
+                // Hide Chat UI
+                document.getElementById('chatArea').style.display = 'none';
+                document.querySelector('.input-area-container').style.display = 'none';
+                document.querySelector('.center-greeting').style.display = 'none';
+
+                // Show Creator UI
+                const area = document.getElementById('presentationCreatorArea');
+                area.style.display = 'flex';
+
+                renderThemes('all');
+            }
+
+            function closePresentationSetup() {
+                // Show Chat UI
+                document.getElementById('chatArea').style.display = 'block';
+                document.querySelector('.input-area-container').style.display = 'block';
+
+                // If chat is empty, show greeting
+                if (conversationHistory.length === 0) {
+                    document.querySelector('.center-greeting').style.display = 'flex';
+                }
+
+                // Hide Creator UI
+                document.getElementById('presentationCreatorArea').style.display = 'none';
+            }
+
+            function renderThemes(category) {
+                const grid = document.getElementById('pptThemesGrid');
+                grid.innerHTML = '';
+
+                const filtered = category === 'all' ? pptThemes : pptThemes.filter(t => t.category === category);
+
+                filtered.forEach(theme => {
+                    const card = document.createElement('div');
+                    card.className = `ppt-theme-card ${selectedThemeId === theme.id ? 'selected' : ''}`;
+                    card.onclick = () => selectTheme(theme.id);
+
+                    const textColor = theme.text || '#ffffff';
+                    const borderColor = theme.border ? '1px solid #e5e7eb' : 'none';
+
+                    card.innerHTML = `
+                        <div class="ppt-theme-thumbnail" style="background: ${theme.color}; color: ${textColor}; border-bottom: ${borderColor}">
+                            ${theme.name.substring(0, 2).toUpperCase()}
+                        </div>
+                        <div class="ppt-theme-info">
+                            <div class="ppt-theme-name">${theme.name}</div>
+                            <div class="ppt-theme-category">${theme.category.charAt(0).toUpperCase() + theme.category.slice(1)}</div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            function filterThemes(category, btn) {
+                // Update active chip
+                document.querySelectorAll('.ppt-filter-chip').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                renderThemes(category);
+            }
+
+            function selectTheme(id) {
+                selectedThemeId = id;
+                renderThemes(document.querySelector('.ppt-filter-chip.active').innerText.toLowerCase() === 'all' ? 'all' : document.querySelector('.ppt-filter-chip.active').innerText.toLowerCase());
+
+                // Show Generate Button
+                const fab = document.getElementById('pptGenerateFab');
+                fab.style.display = 'flex';
+            }
+
+            function generatePresentationFromFull() {
+                const topic = document.getElementById('pptFullTopic').value;
+                if (!topic) return alert("Please enter a topic first.");
+                if (!selectedThemeId) return alert("Please select a theme.");
+
+                // Map to old logic
+                // Ensure pptTopic element exists or create a hidden one if needed, 
+                // but generatePresentation reads from 'pptTopic'. 
+                // Let's update generatePresentation to read from pptFullTopic OR pptTopic.
+                // For now, let's just set the value of the hidden modal input if it exists, or modify generatePresentation.
+                // Better: modify generatePresentation to accept arguments or check both.
+                // But simpler: just set the value of the element generatePresentation uses.
+                // Wait, I removed the modal HTML? No, I might have kept it hidden.
+                // Let's check if 'pptTopic' exists. It was in the modal I replaced.
+                // Actually, I replaced the modal HTML with the new area. So 'pptTopic' input is GONE.
+                // I need to update generatePresentation to use 'pptFullTopic'.
+
+                selectedTemplate = selectedThemeId;
+                generatePresentation();
+
+                closePresentationSetup();
             }
 
             async function generatePresentation() {
-                const topic = document.getElementById('pptTopic').value;
+                const topicInput = document.getElementById('pptFullTopic') || document.getElementById('pptTopic');
+                const topic = topicInput ? topicInput.value : '';
                 const style = selectedTemplate;
 
                 if (!topic) {
@@ -4012,7 +4118,7 @@ Instructions:
                     return;
                 }
 
-                document.getElementById('pptSetupModal').style.display = 'none';
+                // document.getElementById('pptSetupModal').style.display = 'none'; // Removed
 
                 // Show loading in chat
                 const loadingDiv = document.createElement('div');
