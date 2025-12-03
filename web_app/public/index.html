@@ -4804,7 +4804,7 @@ Instructions:
             }
 
             async function sendMessage() {
-                const text = input.value.trim();
+                const text = chatInput.value.trim();
                 const image = currentImageBase64;
 
                 if (!text && !image) return;
@@ -4813,8 +4813,8 @@ Instructions:
                 document.querySelector('.main-content').classList.remove('empty-state');
 
                 // Clear input
-                input.value = '';
-                input.style.height = 'auto';
+                chatInput.value = '';
+                chatInput.style.height = 'auto';
                 currentImageBase64 = null;
                 imagePreviewContainer.style.display = 'none';
                 imageInput.value = '';
@@ -4837,8 +4837,8 @@ Instructions:
                     addMessage('user', text);
                 }
 
-                input.value = '';
-                input.style.height = 'auto';
+                chatInput.value = '';
+                chatInput.style.height = 'auto';
                 updateTokenCount('');
 
                 // Keep image for API call then clear
