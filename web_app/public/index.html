@@ -1677,6 +1677,18 @@
             <div class="input-area-wrapper">
                 <div class="input-box" style="background: transparent; border: none; box-shadow: none; padding: 0;">
 
+                    <!-- Send Button (Centered Above) -->
+                    <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                        <button class="send-btn" onclick="sendMessage()"
+                            style="width: 45px; height: 45px; border-radius: 50%; background: #f3f4f6; color: #111827; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.2s;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="19" x2="12" y2="5"></line>
+                                <polyline points="5 12 12 5 19 12"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+
                     <div id="imagePreviewContainer"
                         style="display: none; padding: 10px; border-bottom: 1px solid var(--border); background: white; border-radius: 12px 12px 0 0;">
                         <div style="position: relative; display: inline-block;">
@@ -1686,7 +1698,7 @@
                         </div>
                     </div>
 
-                    <!-- Grok Style Input Container v2 -->
+                    <!-- Grok Style Input Container v3 (No Auto, No Button Inside) -->
                     <div class="input-box-wrapper">
                         <div class="input-box"
                             style="display: flex; align-items: center; padding: 8px 12px 8px 16px; border-radius: 9999px; border: 1px solid #e5e7eb; background: #f9fafb; box-shadow: 0 1px 2px rgba(0,0,0,0.02); min-height: 56px;">
@@ -1708,40 +1720,6 @@
                             <textarea id="input" rows="1" placeholder="Was möchtest du wissen?"
                                 style="flex: 1; border: none; background: transparent; outline: none; resize: none; padding: 0; font-size: 16px; color: #111827; font-family: inherit; line-height: 24px; height: 24px;"></textarea>
 
-                            <!-- Right: Mode & Send -->
-                            <div style="display: flex; align-items: center; gap: 12px; margin-left: 8px;">
-
-                                <!-- Mode Selector (Rocket) -->
-                                <button class="icon-btn"
-                                    style="display: flex; align-items: center; gap: 6px; background: transparent; border: none; color: #111827; font-weight: 600; font-size: 14px; cursor: pointer; padding: 4px 8px; border-radius: 6px;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path
-                                            d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z">
-                                        </path>
-                                        <path
-                                            d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z">
-                                        </path>
-                                        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
-                                        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
-                                    </svg>
-                                    <span>Automatisch</span>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="6 9 12 15 18 9"></polyline>
-                                    </svg>
-                                </button>
-
-                                <!-- Send Button (Light Gray Circle with Arrow) -->
-                                <button class="send-btn" onclick="sendMessage()"
-                                    style="width: 32px; height: 32px; border-radius: 50%; background: #f3f4f6; color: #111827; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: background 0.2s;">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="12" y1="19" x2="12" y2="5"></line>
-                                        <polyline points="5 12 12 5 19 12"></polyline>
-                                    </svg>
-                                </button>
-                            </div>
                         </div>
                     </div>
 
