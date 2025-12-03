@@ -1621,7 +1621,7 @@
                     <line x1="16" y1="8" x2="2" y2="22"></line>
                     <line x1="17.5" y1="15" x2="9" y2="15"></line>
                 </svg>
-                <span id="contentCreatorText">Content Creator</span>
+                <span id="contentCreatorText">Prompts</span>
             </div>
 
             <!-- Tools Section -->
@@ -2088,7 +2088,7 @@
                 <!-- Header -->
                 <div
                     style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-sidebar);">
-                    <h2 style="margin: 0; font-size: 1.2rem;">🎨 Content Creator Studio</h2>
+                    <h2 style="margin: 0; font-size: 1.2rem;">✨ Prompts</h2>
                     <button onclick="document.getElementById('contentCreatorModal').style.display='none'"
                         style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-secondary);">&times;</button>
                 </div>
@@ -2096,54 +2096,42 @@
                 <!-- Body -->
                 <div style="display: flex; flex: 1; overflow: hidden;">
                     <!-- Sidebar Tabs -->
-                    <div
-                        style="width: 200px; background: var(--bg-sidebar); border-right: 1px solid var(--border); padding: 10px;">
-                        <div class="settings-tab active" onclick="switchContentTab('social')" id="tabSocial">
-                            <span>📱 Social Media</span>
-                        </div>
-                        <div class="settings-tab" onclick="switchContentTab('marketing')" id="tabMarketing">
-                            <span>📢 Marketing</span>
-                        </div>
-                        <div class="settings-tab" onclick="switchContentTab('image')" id="tabImage">
-                            <span>🖼️ Image Gen</span>
-                        </div>
-                        <div class="settings-tab" onclick="switchContentTab('video')" id="tabVideo">
-                            <span>🎬 Video Script</span>
-                        </div>
-                    </div>
+                    <!-- Sidebar Tabs Hidden for now as we focus on single prompt gen -->
+                    <div style="display:none;"></div>
 
                     <!-- Content Area -->
                     <div style="flex: 1; padding: 20px; overflow-y: auto; background: var(--bg-body);">
 
-                        <!-- Social Media Tab -->
+                        <div style="margin-bottom: 20px; color: var(--text-secondary); line-height: 1.6;">
+                            <p><strong>متخصصة لصياغة وإنتاج Prompts عالية الاحترافية، مصممة لتمكينك من الحصول على أقصى
+                                    أداء من نماذج الذكاء الاصطناعي.</strong></p>
+                            <p>يقدم هذا القسم Prompts دقيقة، واضحة، قابلة للتنفيذ، ومهيكلة بحسب الهدف: كتابة، تصميم،
+                                تحليل، برمجة، تسويق أو أي استخدام آخر.</p>
+                            <p>ما عليك سوى إدخال فكرتك العامة، وسيتم تحويلها إلى Prompt احترافي جاهز للاستخدام في أي
+                                نموذج.</p>
+                        </div>
+
+                        <!-- Prompt Generator Interface -->
                         <div id="content-social" class="content-tab active">
-                            <h3>Social Media Post Generator</h3>
                             <div class="setting-group">
-                                <label class="setting-label">Platform</label>
-                                <select class="setting-input" id="socialPlatform">
-                                    <option value="Instagram">Instagram</option>
-                                    <option value="LinkedIn">LinkedIn</option>
-                                    <option value="Twitter">Twitter / X</option>
-                                    <option value="Facebook">Facebook</option>
-                                    <option value="TikTok">TikTok Caption</option>
-                                </select>
-                            </div>
-                            <div class="setting-group">
-                                <label class="setting-label">Topic / Content</label>
+                                <label class="setting-label">فكرتك العامة (General Idea)</label>
                                 <textarea class="setting-input" id="socialTopic" rows="4"
-                                    placeholder="What is this post about?"></textarea>
+                                    placeholder="اكتب فكرتك هنا... (مثال: أريد خطة تسويقية لمنتج قهوة جديد)"></textarea>
                             </div>
                             <div class="setting-group">
-                                <label class="setting-label">Tone</label>
-                                <select class="setting-input" id="socialTone">
-                                    <option value="Professional">Professional</option>
-                                    <option value="Casual">Casual</option>
-                                    <option value="Funny">Funny</option>
-                                    <option value="Inspirational">Inspirational</option>
-                                    <option value="Sales">Sales / Promotional</option>
+                                <label class="setting-label">الهدف (Goal)</label>
+                                <select class="setting-input" id="socialPlatform">
+                                    <option value="General">عام (General)</option>
+                                    <option value="Writing">كتابة (Writing)</option>
+                                    <option value="Design">تصميم (Design)</option>
+                                    <option value="Coding">برمجة (Coding)</option>
+                                    <option value="Marketing">تسويق (Marketing)</option>
+                                    <option value="Analysis">تحليل (Analysis)</option>
                                 </select>
                             </div>
-                            <button class="save-btn" onclick="generateContent('social')">Generate Post</button>
+
+                            <button class="save-btn" onclick="generateContent('social')">تحويل إلى Prompt
+                                احترافي</button>
                             <div id="socialOutput" class="code-block-wrapper" style="display:none; margin-top:20px;">
                                 <div class="code-header">Generated Post <button class="copy-btn"
                                         onclick="copyContent('socialResult')">Copy</button></div>
