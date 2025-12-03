@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zen Chat Web</title>
+    <title>Velai Web</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
@@ -1563,8 +1563,7 @@
                 <path d="M10 15.5a2.5 2.5 0 0 0 4 0"></path>
             </svg>
             <span
-                style="background: var(--accent-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: -0.5px; margin-left: 10px; font-size: 20px;">Zenith
-                AI 2.0</span>
+                style="background: var(--accent-gradient); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: -0.5px; margin-left: 10px; font-size: 20px;">Velai</span>
         </div>
 
         <div class="sidebar-scroll-area">
@@ -2679,7 +2678,7 @@
                     newChat: "Neuer Chat",
                     darkMode: "Dark Mode",
                     settings: "Einstellungen",
-                    disclaimer: "Zen Chat kann Fehler machen. Überprüfe wichtige Informationen.",
+                    disclaimer: "Velai kann Fehler machen. Überprüfe wichtige Informationen.",
                     settingsTitle: "Einstellungen",
                     langLabel: "Sprache",
                     sysPromptLabel: "System Prompt",
@@ -2693,7 +2692,7 @@
                     inputPlaceholder: "Schreibe eine Nachricht...",
                     greeting: "Hallo! Wie kann ich dir heute helfen?",
                     pinAccepted: "PIN akzeptiert. Sie können jetzt fortfahren.",
-                    modelSelector: "Zen AI",
+                    modelSelector: "Velai",
                     tokenCounter: "Tokens",
                     // New Translations
                     tabGeneral: "Allgemein",
@@ -2726,7 +2725,7 @@
                     newChat: "New Chat",
                     darkMode: "Dark Mode",
                     settings: "Settings",
-                    disclaimer: "Zen Chat can make mistakes. Check important info.",
+                    disclaimer: "Velai can make mistakes. Check important info.",
                     settingsTitle: "Settings",
                     langLabel: "Language",
                     sysPromptLabel: "System Prompt",
@@ -2740,7 +2739,7 @@
                     inputPlaceholder: "Type a message...",
                     greeting: "Hello! How can I help you today?",
                     pinAccepted: "PIN accepted. You can proceed now.",
-                    modelSelector: "Zen AI",
+                    modelSelector: "Velai",
                     tokenCounter: "Tokens",
                     // New Translations
                     tabGeneral: "General",
@@ -2773,7 +2772,7 @@
                     newChat: "محادثة جديدة",
                     darkMode: "الوضع الداكن",
                     settings: "الإعدادات",
-                    disclaimer: "قد يخطئ Zen Chat. تحقق من المعلومات المهمة.",
+                    disclaimer: "قد يخطئ Velai. تحقق من المعلومات المهمة.",
                     settingsTitle: "الإعدادات",
                     langLabel: "اللغة",
                     sysPromptLabel: "توجيه النظام",
@@ -2787,7 +2786,7 @@
                     inputPlaceholder: "اكتب رسالة...",
                     greeting: "مرحباً! كيف يمكنني مساعدتك اليوم؟",
                     pinAccepted: "تم قبول الرمز. يمكنك المتابعة الآن.",
-                    modelSelector: "Zen AI",
+                    modelSelector: "Velai",
                     tokenCounter: "الرموز",
                     // New Translations
                     tabGeneral: "عام",
@@ -3203,7 +3202,7 @@
                     return;
                 }
 
-                let exportText = "Zen Chat Export\n\n";
+                let exportText = "Velai Export\n\n";
                 conversationHistory.forEach(msg => {
                     let content = msg.content;
                     if (Array.isArray(content)) {
@@ -4346,7 +4345,7 @@
                 libBtn.onclick = () => addToLibrary(role, content, imageUrl);
                 actions.appendChild(libBtn);
 
-                name.innerHTML = `< span > ${role === 'user' ? 'Du' : 'Zenith AI'}</span > `;
+                name.innerHTML = `< span > ${role === 'user' ? 'Du' : 'Velai'}</span > `;
                 name.appendChild(actions);
 
                 const textDiv = document.createElement('div');
@@ -4489,7 +4488,7 @@
                 // Loading indicator
                 const loadingDiv = document.createElement('div');
                 loadingDiv.className = 'message';
-                loadingDiv.innerHTML = `< div class="avatar ai" > AI</div > <div class="message-content"><div class="message-name">Zen Chat</div><div class="message-text">...</div></div>`;
+                loadingDiv.innerHTML = `< div class="avatar ai" > AI</div > <div class="message-content"><div class="message-name">Velai</div><div class="message-text">...</div></div>`;
                 chatContent.appendChild(loadingDiv);
                 chatArea.scrollTop = chatArea.scrollHeight;
 
