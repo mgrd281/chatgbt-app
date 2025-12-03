@@ -3249,52 +3249,42 @@
             }
 
             function toggleSettings() {
-                if (settingsModal.style.display === 'flex') {
-                    // Save Settings
-                    systemPrompt = document.getElementById('systemPrompt').value;
-                    currentLanguage = languageSelect.value;
-
-                    // Save new fields
-                    localStorage.setItem('userEmail', document.getElementById('emailInput').value);
-                    localStorage.setItem('userPhone', document.getElementById('phoneInput').value);
-                    localStorage.setItem('audioMode', document.getElementById('audioModeToggle').checked);
-
-                    apiKey = document.getElementById('apiKeyInput').value;
-                    localStorage.setItem('apiKey', apiKey);
-
-                    localStorage.setItem('systemPrompt', systemPrompt);
-                    localStorage.setItem('language', currentLanguage);
-
-                    // Save to Cloud
-                    const email = document.getElementById('emailInput').value;
-                    const phone = document.getElementById('phoneInput').value;
-                    const settings = {
-                        systemPrompt,
-                        language: currentLanguage,
-                        audioMode: localStorage.getItem('audioMode') === 'true',
-                        apiKey: apiKey
-                    };
-
-                    // Get selected plan (simple logic for now)
-                    let plan = localStorage.getItem('selectedPlan') || 'free';
-
-                    StorageService.saveUserProfile(email, phone, settings, plan);
-
-                    updateUILanguage(currentLanguage);
-
-                    settingsModal.style.display = 'none';
+                const modal = document.getElementById('settingsModal');
+                if (modal.style.display === 'flex') {
+                    modal.style.display = 'none';
                 } else {
-                    // Open Settings
-                    document.getElementById('systemPrompt').value = systemPrompt;
-                    languageSelect.value = currentLanguage;
-                    // Load new fields
+                    // Load Settings
+                    document.getElementById('systemPrompt').value = localStorage.getItem('systemPrompt') || '';
+                    document.getElementById('languageSelect').value = localStorage.getItem('language') || 'de';
+                    document.getElementById('apiKeyInput').value = localStorage.getItem('apiKey') || '';
                     document.getElementById('emailInput').value = localStorage.getItem('userEmail') || '';
                     document.getElementById('phoneInput').value = localStorage.getItem('userPhone') || '';
                     document.getElementById('audioModeToggle').checked = localStorage.getItem('audioMode') === 'true';
-                    document.getElementById('apiKeyInput').value = apiKey;
-
                     settingsModal.style.display = 'flex';
                 }
+            }
+
+            function saveSettings() {
+                // Save Settings
+                const systemPrompt = document.getElementById('systemPrompt').value;
+                const currentLanguage = document.getElementById('languageSelect').value;
+                const apiKeyVal = document.getElementById('apiKeyInput').value;
+
+                localStorage.setItem('systemPrompt', systemPrompt);
+                localStorage.setItem('language', currentLanguage);
+                localStorage.setItem('apiKey', apiKeyVal);
+                localStorage.setItem('userEmail', document.getElementById('emailInput').value);
+                localStorage.setItem('userPhone', document.getElementById('phoneInput').value);
+                localStorage.setItem('audioMode', document.getElementById('audioModeToggle').checked);
+
+                // Update global variables
+                apiKey = apiKeyVal;
+
+                // Close Modal
+                document.getElementById('settingsModal').style.display = 'none';
+
+                // Reload page to apply language changes if needed, or just alert
+                // location.reload(); 
             }
 
             function selectPlan(planName) {
