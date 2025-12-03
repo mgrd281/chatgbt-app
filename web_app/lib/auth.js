@@ -6,15 +6,16 @@ export const authOptions = {
         CredentialsProvider({
             name: "Email Login",
             credentials: {
-                email: { label: "Email", type: "email", placeholder: "admin@example.com" }
+                email: { label: "Email", type: "email", placeholder: "admin@example.com" },
+                password: { label: "Password", type: "password" }
             },
             async authorize(credentials) {
-                const { email } = credentials;
+                const { email, password } = credentials;
                 try {
                     const res = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
                     const user = res.rows[0];
 
-                    if (user) {
+                    if (user && user.password === password) {
                         // For this demo, we allow login if email exists.
                         // Ensure you have an admin user in DB: UPDATE users SET role='admin' WHERE email='...';
                         return { id: user.id.toString(), email: user.email, role: user.role };

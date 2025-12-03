@@ -56,6 +56,8 @@ const initDb = async () => {
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at BIGINT;`);
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_start BIGINT;`);
             await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_end BIGINT;`);
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'user';`);
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS password TEXT;`);
         } catch (e) { console.log("Migration note: Columns might already exist"); }
 
         console.log("Database Tables Ready.");
@@ -212,7 +214,7 @@ app.delete('/api/presentations/:id', async (req, res) => {
     }
 });
 
-const PORT = 3000;
+const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
